@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flex | Portal de Señalética y Visual Management</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Local offline assets & PPTX generator -->
+  <script src="assets/assets.js"></script>
+  <script src="assets/pptxgen.bundle.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Top Navigation Bar -->
+    <header class="navbar no-print">
+      <div class="nav-inner">
+        <div class="brand-wrapper">
+          <img id="nav-brand-logo" src="assets/flex_logo.png" alt="Flex Logo" class="brand-logo-img">
+          <div class="brand-divider"></div>
+          <div class="brand-text">
+            <h1>Visual Management & Señalética</h1>
+            <p>Planta de Manufactura • Sistema de Pedidos y Taller Kanban</p>
+          </div>
+        </div>
+
+        <nav class="nav-tabs" role="tablist">
+          <button id="nav-btn-request" class="nav-tab-btn active" onclick="app.switchTab('request')">
+            <span>📝</span> Nuevo Pedido
+          </button>
+          <button id="nav-btn-track" class="nav-tab-btn" onclick="app.switchTab('track')">
+            <span>🔍</span> Rastrear Pedido
+          </button>
+          <button id="nav-btn-kanban" class="nav-tab-btn" onclick="app.switchTab('kanban')">
+            <span>📋</span> Tablero Kanban
+            <span id="kanban-badge-count" class="badge-counter">0</span>
+          </button>
+          <button id="nav-btn-metrics" class="nav-tab-btn" onclick="app.switchTab('metrics')">
+            <span>📊</span> Métricas
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <!-- ===================================================================
+           TAB 1: NUEVO PEDIDO
+           =================================================================== -->
+      <section id="tab-request" class="tab-pane active">
+        
+        <!-- Category Selector (8 Official Plant Items) -->
+        <div class="category-selection-grid">
+          <div id="cat-card-station" class="category-card selected" onclick="app.selectCategory('station')">
+            <div class="category-icon-wrapper">🏭</div>
+            <div class="category-name">Estación de Planta</div>
+          </div>
+
+          <div id="cat-card-bin" class="category-card" onclick="app.selectCategory('bin')">
+            <div class="category-icon-wrapper">📦</div>
+            <div class="category-name">Bines de Material</div>
+          </div>
+
+          <div id="cat-card-scrap" class="category-card" onclick="app.selectCategory('scrap')">
+            <div class="category-icon-wrapper">🗑️</div>
+            <div class="category-name">Tarjeta de Scrap</div>
+          </div>
+
+          <div id="cat-card-slot" class="category-card" onclick="app.selectCategory('slot')">
+            <div class="category-icon-wrapper">🔢</div>
+            <div class="category-name">Número de Slot</div>
+          </div>
+
+          <div id="cat-card-traveler" class="category-card" onclick="app.selectCategory('traveler')">
+            <div class="category-icon-wrapper">🛒</div>
+            <div class="category-name">Carro / Rack Viajero</div>
+          </div>
+
+          <div id="cat-card-aerial" class="category-card" onclick="app.selectCategory('aerial')">
+            <div class="category-icon-wrapper">🪧</div>
+            <div class="category-name">Letrero Aéreo</div>
+          </div>
+
+          <div id="cat-card-laptop" class="category-card" onclick="app.selectCategory('laptop')">
+            <div class="category-icon-wrapper">💻</div>
+            <div class="category-name">Vinil para Laptop</div>
+          </div>
+
+          <div id="cat-card-office" class="category-card" onclick="app.selectCategory('office')">
+            <div class="category-icon-wrapper">🏢</div>
+            <div class="category-name">Vinil de Oficina</div>
+          </div>
+        </div>
+
+        <!-- Form + Live Preview Layout -->
+        <div class="order-creator-layout">
+          
+          <!-- Form Panel -->
+          <div class="form-panel-card">
+            <div class="panel-header">
+              <h3 id="form-category-heading" class="panel-title">
+                <span>🏭</span> Identificación de Estación
+              </h3>
+              <span id="form-category-badge" class="badge-counter" style="background:#0284c7;">Estaciones</span>
+            </div>
+
+            <form id="order-form" novalidate onsubmit="app.handleOrderSubmit(event)">
+              
+              <!-- 1. CAMPOS DE ESTACIÓN -->
+              <div id="fields-station-container">
+                <div class="form-grid">
+                  <div class="form-group-full">
+                    <label class="form-label" for="station-sub-type">
+                      Tipo de Estación <span class="required-star">*</span>
+                    </label>
+                    <select id="station-sub-type" class="form-control" onchange="app.updateStationType(this.value)">
+                      <option value="flow">Estación con Flujo (Anterior / Siguiente) • 9 x 12.5 cm</option>
+                      <option value="automatic">B29 Estación de Línea Automática • 13.5 x 24.5 cm</option>
+                      <option value="standard">Estación Estándar (sin flujo) • 9 x 12.5 cm</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="form-label" for="station-name-en">
+                      Nombre en Inglés (Process Name) <span class="required-star">*</span>
+                    </label>
+                    <input type="text" id="station-name-en" class="form-control" placeholder="Ej. Solder Paste Inspection" oninput="app.refreshLivePreview()">
+                  </div>
+
+                  <div>
+                    <label class="form-label" for="station-name-es">
+                      Nombre en Español (Nombre de Proceso) <span class="required-star">*</span>
+                    </label>
+                    <input type="text" id="station-name-es" class="form-control" placeholder="Ej. Inspección de Pasta" oninput="app.refreshLivePreview()">
+                  </div>
+
+                  <!-- Campos de Flujo -->
+                  <div id="flow-fields-group" class="form-group-full">
+                    <div class="form-grid">
+                      <div>
+                        <label class="form-label" for="flow-prev-process">
+                          Estación Anterior (Previous Process) <span class="required-star">*</span>
+                        </label>
+                        <input type="text" id="flow-prev-process" class="form-control" placeholder="Ej. Screen Printer" oninput="app.refreshLivePreview()">
+                      </div>
+                      <div>
+                        <label class="form-label" for="flow-next-process">
+                          Siguiente Estación (Next Process) <span class="required-star">*</span>
+                        </label>
+                        <input type="text" id="flow-next-process" class="form-control" placeholder="Ej. Reflow Oven" oninput="app.refreshLivePreview()">
+                      </div>
+                      <div class="form-group-full">
+                        <label class="form-label">Dirección del Flujo</label>
+                        <div class="segment-control">
+                          <button type="button" id="btn-flow-lr" class="segment-btn active" onclick="app.setFlowDirection('lr')">
+                            ➡️ Izquierda a Derecha
+                          </button>
+                          <button type="button" id="btn-flow-rl" class="segment-btn" onclick="app.setFlowDirection('rl')">
+                            ⬅️ Derecha a Izquierda
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Toggles Condicionales -->
+                  <div class="form-group-full">
+                    <label class="form-label">Iconos Condicionales</label>
+                    <div class="toggle-cards-row">
+                      <div id="card-toggle-critical" class="toggle-card" onclick="app.toggleCheck('check-is-critical')">
+                        <div class="toggle-card-info">
+                          <span class="toggle-card-icon">⚠️</span>
+                          <div class="toggle-card-text">
+                            <h4>Estación Crítica</h4>
+                            <p>Muestra triángulo de advertencia</p>
+                          </div>
+                        </div>
+                        <label class="switch" onclick="event.stopPropagation()">
+                          <input type="checkbox" id="check-is-critical" onchange="app.onToggleCardChange('critical')">
+                          <span class="slider"></span>
+                        </label>
+                      </div>
+
+                      <div id="card-toggle-seated" class="toggle-card" onclick="app.toggleCheck('check-is-seated')">
+                        <div class="toggle-card-info">
+                          <span class="toggle-card-icon">🪑</span>
+                          <div class="toggle-card-text">
+                            <h4>Operador Sentado</h4>
+                            <p>Muestra icono de persona sentada</p>
+                          </div>
+                        </div>
+                        <label class="switch" onclick="event.stopPropagation()">
+                          <input type="checkbox" id="check-is-seated" onchange="app.onToggleCardChange('seated')">
+                          <span class="slider"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="form-label" for="station-copies">Cantidad de Tarjetas</label>
+                    <input type="number" id="station-copies" class="form-control" value="4" min="1" max="40" oninput="app.refreshLivePreview()">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2. CAMPOS DE BINES -->
+              <div id="fields-bin-container" style="display:none;">
+                <div class="form-grid">
+                  <div>
+                    <label class="form-label" for="bin-size">
+                      Tamaño de Identificación <span class="required-star">*</span>
+                    </label>
+                    <select id="bin-size" class="form-control" onchange="app.refreshLivePreview()">
+                      <option value="2x7">2 x 7 cm (Gavetas y Bines chicos)</option>
+                      <option value="2.5x9">2.5 x 9 cm (Bines medianos)</option>
+                      <option value="4x10" selected>4 x 10 cm (Bin Estándar de Línea)</option>
+                      <option value="6x20">6 x 20 cm (Bin Grande / Supermercado / Rack)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="form-label" for="bin-sub-type">
+                      Formato de Identificación <span class="required-star">*</span>
+                    </label>
+                    <select id="bin-sub-type" class="form-control" onchange="app.updateBinType(this.value)">
+                      <option value="simple">Identificación de Bines (Número de Parte y Nombre Común)</option>
+                      <option value="minmax">Identificación Min-Max (Min / Max / Punto de Reorden RP)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="form-label" for="bin-part-number">
+                      Número de Parte (P/N) <span class="required-star">*</span>
+                    </label>
+                    <input type="text" id="bin-part-number" class="form-control" placeholder="Ej. TYEH-1144337_00-BW" oninput="app.refreshLivePreview()">
+                  </div>
+
+                  <div id="bin-common-name-group">
+                    <label class="form-label" for="bin-common-name">
+                      Nombre Común / Descripción de Material <span class="required-star">*</span>
+                    </label>
+                    <input type="text" id="bin-common-name" class="form-control" placeholder="Ej. Tornillo M4 x 12mm" oninput="app.refreshLivePreview()">
+                  </div>
+
+                  <div id="bin-minmax-fields" class="form-group-full" style="display:none;">
+                    <div class="form-grid">
+                      <div>
+                        <label class="form-label" for="bin-min">Mínimo (Resurtido - Min)</label>
+                        <input type="number" id="bin-min" class="form-control" placeholder="Ej. 20" value="20" oninput="app.refreshLivePreview()">
+                      </div>
+                      <div>
+                        <label class="form-label" for="bin-max">Máximo (Surtido - Max)</label>
+                        <input type="number" id="bin-max" class="form-control" placeholder="Ej. 150" value="150" oninput="app.refreshLivePreview()">
+                      </div>
+                      <div>
+                        <label class="form-label" for="bin-rp">Punto de Reorden (RP)</label>
+                        <input type="number" id="bin-rp" class="form-control" placeholder="Ej. 50" value="50" oninput="app.refreshLivePreview()">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group-full">
+                    <label class="form-label" for="bin-photo-input">Foto del Material / Componente (opcional)</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                      <input type="file" id="bin-photo-input" accept="image/*" class="form-control" onchange="app.handleBinPhotoUpload(event)" style="padding: 6px;">
+                      <button type="button" id="bin-photo-clear-btn" class="btn btn-secondary btn-sm" onclick="app.clearBinPhoto()" style="display:none; white-space:nowrap;">
+                        🗑️ Quitar Foto
+                      </button>
+                    </div>
+                    <small style="color:var(--text-muted); font-size:0.75rem;">Sube la foto del componente o déjalo vacío para usar la ilustración estándar.</small>
+                  </div>
+
+                  <div>
+                    <label class="form-label" for="bin-qty">Cantidad de Identificaciones</label>
+                    <input type="number" id="bin-qty" class="form-control" value="8" min="1" max="100">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. CAMPOS DE SCRAP -->
+              <div id="fields-scrap-container" style="display:none;">
+                <div class="form-grid">
+                  <div>
+                    <label class="form-label" for="scrap-size">
+                      Tamaño de Tarjeta <span class="required-star">*</span>
+                    </label>
+                    <select id="scrap-size" class="form-control" onchange="app.refreshLivePreview()">
+                      <option value="2x7">2 x 7 cm</option>
+                      <option value="2.5x9">2.5 x 9 cm</option>
+                      <option value="4x10">4 x 10 cm</option>
+                      <option value="6x20">6 x 20 cm</option>
+                      <option value="9x12.5" selected>9 x 12.5 cm (Contenedor Estándar)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="form-label" for="scrap-line">Línea o Área del Contenedor de Scrap <span class="required-star">*</span></label>
+                    <input type="text" id="scrap-line" class="form-control" placeholder="Ej. Línea 2 SMT" oninput="app.refreshLivePreview()">
+                  </div>
+                  <div>
+                    <label class="form-label" for="scrap-qty">Cantidad de Tarjetas</label>
+                    <input type="number" id="scrap-qty" class="form-control" value="2" min="1" max="20">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 4. CAMPOS DE SLOT -->
+              <div id="fields-slot-container" style="display:none;">
+                <div class="form-grid">
+                  <div>
+                    <label class="form-label" for="slot-number">Número o Rango de Slot <span class="required-star">*</span></label>
+                    <input type="text" id="slot-number" class="form-control" placeholder="Ej. 1 ó 1 al 12" oninput="app.refreshLivePreview()">
+                  </div>
+                  <div>
+                    <label class="form-label" for="slot-rack-name">Nombre de Rack / Estante</label>
+                    <input type="text" id="slot-rack-name" class="form-control" placeholder="Ej. Rack IST #1" oninput="app.refreshLivePreview()">
+                  </div>
+                  <div>
+                    <label class="form-label" for="slot-qty">Cantidad</label>
+                    <input type="number" id="slot-qty" class="form-control" value="3" min="1" max="50">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 5. CAMPOS DE CARRO / RACK VIAJERO (Plantilla Vacía Reutilizable) -->
+              <div id="fields-traveler-container" style="display:none;">
+                <div class="traveler-reusable-info-banner">
+                  <div class="banner-icon">♻️</div>
+                  <div class="banner-content">
+                    <strong>Plantilla Estándar Reutilizable (5S+1)</strong>
+                    <p>Las identificaciones para Carros y Racks se entregan con plantilla estándar enmicada vacía (9 x 12.5 cm). En piso se llenan a mano con plumón borrable (Área, Encargado, Origen/Destino y Qty) para reciclaje continuo. No se requieren datos adicionales de la pieza.</p>
+                  </div>
+                </div>
+
+                <div class="form-grid" style="margin-top: 14px;">
+                  <div>
+                    <label class="form-label" for="traveler-type">
+                      Tipo de Contenedor <span class="required-star">*</span>
+                    </label>
+                    <select id="traveler-type" class="form-control" onchange="app.refreshLivePreview()">
+                      <option value="Carro">Carro en Flujo WIP (9 x 12.5 cm)</option>
+                      <option value="Rack">Rack WIP (9 x 12.5 cm)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="form-label" for="traveler-qty">Cantidad de Identificaciones</label>
+                    <input type="number" id="traveler-qty" class="form-control" value="4" min="1" max="30">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 6. CAMPOS DE LETRERO AÉREO (Slide 22) -->
+              <div id="fields-aerial-container" style="display:none;">
+                <div class="form-grid">
+                  <div>
+                    <label class="form-label" for="aerial-name-en">
+                      Nombre en Inglés (English Title) <span class="required-star">*</span>
+                    </label>
+                    <input type="text" id="aerial-name-en" class="form-control" placeholder="Ej. PCR Lines" oninput="app.refreshLivePreview()">
+                  </div>
+                  <div>
+                    <label class="form-label" for="aerial-name-es">
+                      Nombre en Español (Subtítulo en Español) <span class="required-star">*</span>
+                    </label>
+                    <input type="text" id="aerial-name-es" class="form-control" placeholder="Ej. Lineas de PCR" oninput="app.refreshLivePreview()">
+                  </div>
+                  <div>
+                    <label class="form-label" for="aerial-qty">Cantidad de Letreros</label>
+                    <input type="number" id="aerial-qty" class="form-control" value="1" min="1" max="10">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 7. CAMPOS DE VINIL LAPTOP -->
+              <div id="fields-laptop-container" style="display:none;">
+                <div class="form-grid">
+                  <div class="form-group-full">
+                    <label class="form-label" for="laptop-name">
+                      Nombre y Apellido <span class="required-star">*</span>
+                    </label>
+                    <input type="text" id="laptop-name" class="form-control" placeholder="Tu nombre y apellido" oninput="app.refreshLivePreview()">
+                  </div>
+                  <div>
+                    <label class="form-label" for="laptop-qty">Cantidad</label>
+                    <input type="number" id="laptop-qty" class="form-control" value="1" min="1" max="5">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 8. CAMPOS DE VINIL OFICINA -->
+              <div id="fields-office-container" style="display:none;">
+                <div class="form-grid">
+                  <div class="form-group-full">
+                    <label class="form-label" for="office-name">
+                      Nombre y Apellido <span class="required-star">*</span>
+                    </label>
+                    <input type="text" id="office-name" class="form-control" placeholder="Tu nombre y apellido" oninput="app.refreshLivePreview()">
+                  </div>
+                  <div>
+                    <label class="form-label" for="office-desk-id">Número de Escritorio / Cubículo</label>
+                    <input type="text" id="office-desk-id" class="form-control" placeholder="Ej. Cubículo C-14">
+                  </div>
+                  <div>
+                    <label class="form-label" for="office-qty">Cantidad</label>
+                    <input type="number" id="office-qty" class="form-control" value="1" min="1" max="5">
+                  </div>
+                </div>
+              </div>
+
+              <!-- BOTÓN PARA AGREGAR ESTA IDENTIFICACIÓN AL PEDIDO (MULTI-ITEM) -->
+              <div class="add-item-callout">
+                <button type="button" id="btn-add-item-to-order" class="btn-add-item" onclick="app.addItemToCart()">
+                  <span>➕</span> Agregar esta Identificación al Pedido
+                </button>
+              </div>
+
+              <!-- LISTA DE IDENTIFICACIONES EN ESTE TICKET (CARRITO MULTI-ITEM) -->
+              <div id="order-cart-section" class="order-cart-card" style="display:none;">
+                <div class="cart-header">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:1.2rem;">📦</span>
+                    <div>
+                      <h4 style="margin:0; font-size:0.95rem; font-weight:800; color:var(--navy-dark);">Identificaciones en este Pedido</h4>
+                      <span id="cart-summary-text" style="font-size:0.78rem; color:var(--text-muted);">0 items agregados</span>
+                    </div>
+                  </div>
+                  <span id="cart-total-badge" class="badge-counter" style="font-size:0.82rem; padding:4px 10px;">Total: 0 pzas</span>
+                </div>
+
+                <div id="cart-items-list" class="cart-items-list">
+                  <!-- Renderizado dinámico -->
+                </div>
+              </div>
+
+              <!-- DATOS DEL SOLICITANTE (CAMPOS LIMPIOS SIN EJEMPLOS PRECARGADOS) -->
+              <div class="form-section-title">Datos para Entrega</div>
+              <div class="form-grid">
+                <div>
+                  <label class="form-label" for="requester-name">
+                    Tu Nombre Completo <span class="required-star">*</span>
+                  </label>
+                  <input type="text" id="requester-name" class="form-control" placeholder="Nombre y Apellidos">
+                </div>
+                <div>
+                  <label class="form-label" for="requester-email">
+                    Tu Correo Flex o GID <span class="required-star">*</span>
+                  </label>
+                  <input type="text" id="requester-email" class="form-control" placeholder="nombre.apellido@flex.com">
+                </div>
+                <div>
+                  <label class="form-label" for="order-line-area">
+                    Lugar / Línea de Entrega <span class="required-star">*</span>
+                  </label>
+                  <input type="text" id="order-line-area" class="form-control" placeholder="Ej. Línea 3 SMT / Cubículo B-12">
+                </div>
+                <div>
+                  <label class="form-label" for="order-priority">Prioridad</label>
+                  <select id="order-priority" class="form-control">
+                    <option value="Normal">Normal</option>
+                    <option value="Urgente">Urgente (Auditoría / Paro)</option>
+                  </select>
+                </div>
+                <div class="form-group-full">
+                  <label class="form-label" for="order-notes">Notas adicionales (opcional)</label>
+                  <input type="text" id="order-notes" class="form-control" placeholder="Instrucciones especiales para el taller...">
+                </div>
+              </div>
+
+              <!-- Botones de Acción -->
+              <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button type="submit" id="btn-submit-order" class="btn btn-primary" style="flex: 2;">
+                  <span>🚀</span> <span id="btn-submit-order-text">Enviar Pedido</span>
+                </button>
+                <button type="button" id="btn-download-preview-pptx" class="btn btn-secondary" onclick="app.downloadCurrentPptxPreview()" style="flex: 1;" title="Descargar archivo PowerPoint">
+                  <span>📥</span> PPTX
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Live Preview Sticky Panel -->
+          <div class="preview-sticky-panel">
+            <div class="preview-container">
+              <div class="preview-header">
+                <div>
+                  <h4 style="font-size: 1rem; font-weight: 700; color: var(--navy-dark);">Previsualización</h4>
+                  <p style="font-size: 0.75rem; color: var(--text-muted);">Exacto al formato de impresión</p>
+                </div>
+                <span class="preview-badge-live">En vivo</span>
+              </div>
+
+              <!-- 1. Mockup Estación - Exacto al estándar oficial ODP / PPTX -->
+              <div id="preview-station-box">
+                <div class="preview-dimension-tag" id="preview-station-dimension-tag">Dimensiones: 9 cm x 12.5 cm</div>
+                <div class="station-tag-replica" id="replica-card">
+                  <!-- Fila Superior: Iconos condicionales y badge RoHS -->
+                  <div class="replica-top-row">
+                    <div class="replica-left-icons">
+                      <img id="replica-img-seated" src="assets/seated_operator.png" alt="Sentado" class="replica-seated-icon" style="display:none;">
+                      <div id="replica-critical-group" class="replica-critical-badge" style="display:none;">
+                        <img src="assets/critical_warning.svg" alt="Crítica" class="replica-critical-icon">
+                        <div class="replica-critical-text">Critical<br>Station</div>
+                      </div>
+                    </div>
+                    <img id="replica-img-rohs" src="assets/rohs_badge.png" alt="RoHS" class="replica-rohs-icon">
+                  </div>
+
+                  <!-- Centro: Nombres del proceso (Inglés y Español) -->
+                  <div class="replica-center-content">
+                    <div id="replica-txt-en" class="replica-station-english">Process Name</div>
+                    <div id="replica-txt-es" class="replica-station-spanish">Nombre de Proceso</div>
+                  </div>
+
+                  <!-- Fila de Flujo completa de lado a lado con flecha centrada (Estándar ODP) -->
+                  <div id="replica-flow-group" class="replica-flow-row">
+                    <div id="replica-txt-prev" class="replica-flow-col left">Previous Process</div>
+                    <div class="replica-flow-col center">
+                      <img id="replica-img-arrow" src="assets/flow_arrow.png" alt="Flujo" class="replica-flow-arrow">
+                    </div>
+                    <div id="replica-txt-next" class="replica-flow-col right">Next Process</div>
+                  </div>
+
+                  <!-- Fila Inferior: Flex Logo en esquina inferior derecha -->
+                  <div class="replica-bottom-row">
+                    <img id="replica-img-logo" src="assets/flex_logo.png" alt="Flex" class="replica-flex-logo">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2. Mockup Bin (Exacto a Estándar Oficial Slides 14-17) -->
+              <div id="preview-bin-box" style="display:none;">
+                <div class="preview-dimension-tag" id="preview-bin-dimension-tag">Dimensiones: 4 x 10 cm</div>
+                <div class="bin-card-official" id="bin-card-replica">
+                  <!-- Columna izquierda: Foto del Material -->
+                  <div class="bin-col-photo" id="bin-photo-container">
+                    <img id="bin-photo-img" src="" alt="Foto Material" style="display:none;">
+                    <div id="bin-photo-fallback" class="bin-photo-placeholder">
+                      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                      </svg>
+                      <span>Foto del Material</span>
+                    </div>
+                  </div>
+
+                  <!-- Columna derecha: Códigos, P/N y Barra inferior -->
+                  <div class="bin-col-main">
+                    <!-- Superior: Código de barras, Código QR, RoHS -->
+                    <div class="bin-main-top-row">
+                      <div class="bin-barcode-wrapper" id="bin-barcode-container"></div>
+                      <div class="bin-qr-wrapper" id="bin-qr-container"></div>
+                      <img src="assets/rohs_badge.png" alt="RoHS" class="bin-rohs-icon">
+                    </div>
+
+                    <!-- Centro: Número de parte -->
+                    <div class="bin-part-number" id="replica-bin-pn">TYEH-1144337_00-BW</div>
+
+                    <!-- Inferior Simple: Banner Azul con Nombre Común y Logo Flex -->
+                    <div class="bin-desc-bar" id="replica-bin-desc-bar">
+                      <span id="replica-bin-common-name-txt">Tornillo M4 x 12mm</span>
+                      <img src="assets/flex_logo.png" alt="Flex" class="bin-flex-logo-white">
+                    </div>
+
+                    <!-- Inferior Min-Max: 4 bloques coloreados con Logo Flex, Min, Max y RP -->
+                    <div class="bin-metrics-bar" id="replica-bin-metrics-bar" style="display:none;">
+                      <div class="bin-segment-logo">
+                        <img src="assets/flex_logo.png" alt="Flex" class="bin-flex-logo-white">
+                      </div>
+                      <div class="bin-segment-box seg-min">
+                        Min: <strong id="replica-bin-min-val">20</strong>
+                      </div>
+                      <div class="bin-segment-box seg-max">
+                        Max: <strong id="replica-bin-max-val">150</strong>
+                      </div>
+                      <div class="bin-segment-box seg-rp">
+                        RP: <strong id="replica-bin-rp-val">50</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Mockup Scrap (Exacto a Slides 18-20 oficial) -->
+              <div id="preview-scrap-box" style="display:none;">
+                <div class="preview-dimension-tag" id="preview-scrap-dimension-tag">Dimensiones: 9 x 12.5 cm</div>
+                <div class="scrap-replica">
+                  <div class="scrap-top-row">
+                    <img src="assets/rohs_badge.png" alt="RoHS" style="height:36px;">
+                  </div>
+                  <div class="scrap-title-standard">Scrap</div>
+                  <div class="scrap-bottom-row">
+                    <img src="assets/flex_logo.png" alt="Flex" style="height:24px; filter:brightness(0) invert(1);">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 4. Mockup Slot (Exacto a Slide 27 vertical) -->
+              <div id="preview-slot-box" style="display:none;">
+                <div class="preview-dimension-tag">Dimensiones: Estándar Slot IST</div>
+                <div class="slot-replica">
+                  <div class="slot-top-row">
+                    <img src="assets/rohs_badge.png" alt="RoHS" style="height:34px;">
+                  </div>
+                  <div class="slot-label-text">SLOT</div>
+                  <div id="replica-slot-num" class="slot-number-big">1</div>
+                  <div class="slot-bottom-row">
+                    <img src="assets/flex_logo.png" alt="Flex" style="height:22px;">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 5. Mockup Carro / Rack Reutilizable (Exacto a Slides 29-30) -->
+              <div id="preview-traveler-box" style="display:none;">
+                <div class="preview-dimension-tag" id="preview-traveler-dimension-tag">Dimensiones: 9 cm x 12.5 cm</div>
+                <div class="traveler-replica">
+                  <div class="traveler-top-row">
+                    <div class="traveler-type-group">
+                      <div id="replica-traveler-type" class="traveler-type-tag">Carro</div>
+                      <div class="traveler-stamp-box"></div>
+                    </div>
+                    <img src="assets/rohs_badge.png" alt="RoHS" style="height:34px;">
+                  </div>
+                  <div class="traveler-lines-list">
+                    <div class="traveler-line-item">
+                      <span class="traveler-line-label">Área:</span>
+                      <span class="traveler-line-val-blank">___________________________________________</span>
+                    </div>
+                    <div class="traveler-line-item">
+                      <span class="traveler-line-label">Encargado:</span>
+                      <span class="traveler-line-val-blank">___________________________________________</span>
+                    </div>
+                    <div class="traveler-line-item" id="replica-traveler-origin-row">
+                      <span class="traveler-line-label">Origen:</span>
+                      <span class="traveler-line-val-blank">___________________________________________</span>
+                    </div>
+                    <div class="traveler-line-item">
+                      <span class="traveler-line-label">Destino:</span>
+                      <span class="traveler-line-val-blank">___________________________________________</span>
+                    </div>
+                    <div class="traveler-line-item">
+                      <span class="traveler-line-label">Qty:</span>
+                      <span class="traveler-line-val-blank">___________________________________________</span>
+                    </div>
+                  </div>
+                  <div class="traveler-bottom-row">
+                    <span id="replica-traveler-footer-note" class="traveler-footer-note">Solo usar en carros para transporte de WIP</span>
+                    <img src="assets/flex_logo.png" alt="Flex" style="height:22px;">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 6. Mockup Aéreo (Exacto a Slide 22 oficial) -->
+              <div id="preview-aerial-box" style="display:none;">
+                <div class="hanging-sign-replica">
+                  <div class="hanging-top-row">
+                    <img src="assets/rohs_badge.png" alt="RoHS" style="height:36px;">
+                  </div>
+                  <div class="hanging-center-block">
+                    <div id="replica-aerial-text" class="hanging-sign-title">PCR Lines</div>
+                    <div id="replica-aerial-sub" class="hanging-sign-subtitle">Lineas de PCR</div>
+                  </div>
+                  <div class="hanging-bottom-row">
+                    <img src="assets/flex_logo.png" alt="Flex" style="height:24px;">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 7. Mockup Vinil -->
+              <div id="preview-vinyl-box" style="display:none;">
+                <div class="vinyl-decal-replica">
+                  <div id="replica-vinyl-text" class="vinyl-cut-text">Nombre y Apellido</div>
+                  <div id="replica-vinyl-badge" class="vinyl-badge-type">Rotulación en Vinil de Corte</div>
+                </div>
+              </div>
+
+              <!-- Botones bajo Previsualización -->
+              <div class="preview-actions-bar">
+                <button type="button" class="btn btn-secondary btn-block" onclick="app.downloadCurrentPptxPreview()">
+                  <span>📥</span> Descargar PowerPoint (.pptx) para Imprimir
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           TAB 2: RASTREAR PEDIDO
+           =================================================================== -->
+      <section id="tab-track" class="tab-pane" style="display:none;">
+        <div class="tracking-wrapper">
+          <div class="tracking-search-box">
+            <h2>Rastreo de Pedidos de Señalética</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+              Ingresa el número de folio (ej. <strong>#FLX-1001</strong>) o tu nombre:
+            </p>
+            <div class="tracking-search-form">
+              <input type="text" id="track-search-input" class="form-control" placeholder="Ingresa Folio (#FLX-...) o Nombre" onkeyup="if(event.key==='Enter') app.performTrackingSearch()">
+              <button type="button" class="btn btn-primary" onclick="app.performTrackingSearch()">
+                Buscar
+              </button>
+            </div>
+          </div>
+
+          <div id="tracking-result-area"></div>
+
+          <div style="margin-top: 28px;">
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 12px;">
+              Pedidos Recientes
+            </h3>
+            <div id="tracking-recent-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           TAB 3: TABLERO KANBAN
+           =================================================================== -->
+      <section id="tab-kanban" class="tab-pane" style="display:none;">
+        <div class="kanban-container">
+          
+          <div class="kanban-toolbar">
+            <div class="toolbar-filters">
+              <button class="btn btn-secondary btn-sm active" id="filter-all" onclick="app.filterKanban('all')">Todos</button>
+              <button class="btn btn-secondary btn-sm" id="filter-station" onclick="app.filterKanban('station')">Estaciones</button>
+              <button class="btn btn-secondary btn-sm" id="filter-bin" onclick="app.filterKanban('bin')">Bines</button>
+              <button class="btn btn-secondary btn-sm" id="filter-scrap" onclick="app.filterKanban('scrap')">Scrap</button>
+              <button class="btn btn-secondary btn-sm" id="filter-slot" onclick="app.filterKanban('slot')">Slot</button>
+              <button class="btn btn-secondary btn-sm" id="filter-traveler" onclick="app.filterKanban('traveler')">Carro/Rack</button>
+              <button class="btn btn-secondary btn-sm" id="filter-aerial" onclick="app.filterKanban('aerial')">Aéreos</button>
+              <button class="btn btn-secondary btn-sm" id="filter-laptop" onclick="app.filterKanban('laptop')">Laptop</button>
+              <button class="btn btn-secondary btn-sm" id="filter-office" onclick="app.filterKanban('office')">Oficina</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="search-input-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="kanban-search" class="form-control" placeholder="Buscar folio, nombre, área..." oninput="app.searchKanban(this.value)">
+              </div>
+              <button class="btn btn-success btn-sm" onclick="app.batchExportStationsPptx()">
+                <span>📥</span> Descargar PPTX por Lote
+              </button>
+            </div>
+          </div>
+
+          <div class="kanban-board-grid">
+            <div class="kanban-column col-pending" ondragover="app.handleDragOver(event)" ondrop="app.handleDrop(event, 'pending')">
+              <div class="kanban-column-header">
+                <div class="col-header-title"><span>📥</span> Por Iniciar</div>
+                <span id="col-count-pending" class="col-counter">0</span>
+              </div>
+              <div id="cards-pending" class="kanban-cards-wrapper"></div>
+            </div>
+
+            <div class="kanban-column col-process" ondragover="app.handleDragOver(event)" ondrop="app.handleDrop(event, 'process')">
+              <div class="kanban-column-header">
+                <div class="col-header-title"><span>⚙️</span> En Proceso</div>
+                <span id="col-count-process" class="col-counter">0</span>
+              </div>
+              <div id="cards-process" class="kanban-cards-wrapper"></div>
+            </div>
+
+            <div class="kanban-column col-ready" ondragover="app.handleDragOver(event)" ondrop="app.handleDrop(event, 'ready')">
+              <div class="kanban-column-header">
+                <div class="col-header-title"><span>📦</span> Listo para Entrega</div>
+                <span id="col-count-ready" class="col-counter">0</span>
+              </div>
+              <div id="cards-ready" class="kanban-cards-wrapper"></div>
+            </div>
+
+            <div class="kanban-column col-delivered" ondragover="app.handleDragOver(event)" ondrop="app.handleDrop(event, 'delivered')">
+              <div class="kanban-column-header">
+                <div class="col-header-title"><span>✅</span> Entregado</div>
+                <span id="col-count-delivered" class="col-counter">0</span>
+              </div>
+              <div id="cards-delivered" class="kanban-cards-wrapper"></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           TAB 4: MÉTRICAS
+           =================================================================== -->
+      <section id="tab-metrics" class="tab-pane" style="display:none;">
+        <div style="max-width: 900px; margin: 0 auto;">
+          <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--navy-dark); margin-bottom: 20px;">
+            Métricas de Control de Señalética
+          </h2>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px;">
+            <div class="form-panel-card" style="text-align: center; padding: 20px;">
+              <div style="font-size: 2rem; font-weight: 800; color: var(--navy-dark);" id="metric-total-orders">0</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Total de Pedidos</div>
+            </div>
+            <div class="form-panel-card" style="text-align: center; padding: 20px;">
+              <div style="font-size: 2rem; font-weight: 800; color: var(--status-pending);" id="metric-pending-orders">0</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Por Iniciar</div>
+            </div>
+            <div class="form-panel-card" style="text-align: center; padding: 20px;">
+              <div style="font-size: 2rem; font-weight: 800; color: var(--status-process);" id="metric-process-orders">0</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">En Fabricación</div>
+            </div>
+            <div class="form-panel-card" style="text-align: center; padding: 20px;">
+              <div style="font-size: 2rem; font-weight: 800; color: var(--status-ready);" id="metric-completed-orders">0</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Terminados</div>
+            </div>
+          </div>
+
+          <div class="form-panel-card">
+            <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 12px;">
+              Administración de Datos
+            </h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button class="btn btn-secondary btn-sm" onclick="app.exportOrdersJson()">
+                <span>💾</span> Exportar Respaldo (JSON)
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="app.resetSampleData()">
+                <span>🔄</span> Restaurar Ejemplos
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ===================================================================
+         MODALS
+         =================================================================== -->
+    
+    <!-- Modal: Detalle de Pedido -->
+    <div id="modal-order-detail" class="modal-backdrop no-print">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modal-order-title" style="font-size: 1.2rem; font-weight: 700; color: var(--navy-dark);">Detalle del Pedido</h3>
+          <button class="modal-close-btn" onclick="app.closeModal('modal-order-detail')">&times;</button>
+        </div>
+        <div id="modal-order-body"></div>
+      </div>
+    </div>
+
+    <!-- Modal: Confirmación de Pedido Exitoso con Folio Ultra Prominente -->
+    <div id="modal-order-success" class="modal-backdrop no-print">
+      <div class="modal-content" style="text-align: center; max-width: 500px;">
+        <div style="font-size: 3rem; margin-bottom: 8px;">🎉</div>
+        <h3 style="font-size: 1.35rem; font-weight: 800; color: var(--navy-dark); margin-bottom: 4px;">
+          ¡Pedido Registrado con Éxito!
+        </h3>
+        <p style="color: var(--text-muted); font-size: 0.88rem;">
+          Tu solicitud fue recibida en el taller. Guarda tu número de folio para consultar el avance:
+        </p>
+
+        <!-- Prominent Folio Card -->
+        <div class="success-folio-card">
+          <div class="success-folio-label">Número de Folio de Pedido</div>
+          <div class="success-folio-number" id="success-ticket-id">#FLX-1001</div>
+          <button type="button" class="btn-copy-folio" onclick="app.copyFolioToClipboard()">
+            <span id="copy-folio-icon">📋</span> <span id="copy-folio-text">Copiar Folio</span>
+          </button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button id="btn-success-pptx" class="btn btn-success btn-block" onclick="app.downloadSuccessPptx()">
+            <span>📥</span> Descargar PowerPoint (.pptx) para Imprimir
+          </button>
+          <button class="btn btn-primary btn-block" onclick="app.closeModal('modal-order-success'); app.switchTab('track'); app.performTrackingSearchForSuccess();">
+            <span>🔍</span> Rastrear mi Pedido Ahora
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Print Container -->
+    <div id="print-sheet-container" class="print-sheet" style="display:none;"></div>
+
+    <!-- Toasts -->
+    <div id="toast-container" class="toast-container no-print"></div>
+
+  </div>
+
+  <!-- Main Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>

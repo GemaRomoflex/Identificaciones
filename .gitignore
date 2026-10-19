@@ -1,0 +1,6 @@
+*.backup.*
+*.ps1
+*.xlsx
+*.odp
+*.pdf
+portal.aspx
