@@ -364,11 +364,11 @@ select.form-control {
   box-shadow: var(--shadow-sm);
 }
 
-/* Toggle Checkbox Cards (Critical & Seated) */
+/* Toggle Checkbox Cards (Critical, Seated & Logo) */
 .toggle-cards-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
   margin-top: 6px;
 }
 

@@ -535,16 +535,44 @@ class FlexSignageApp {
     const input = document.getElementById(inputId);
     if (!input) return;
     input.checked = !input.checked;
-    this.onToggleCardChange(inputId.includes('critical') ? 'critical' : 'seated');
+    const typeMap = {
+      'check-is-critical': 'critical',
+      'check-is-seated': 'seated',
+      'check-station-logo': 'station-logo',
+      'check-bin-logo': 'bin-logo',
+      'check-scrap-logo': 'scrap-logo',
+      'check-slot-logo': 'slot-logo',
+      'check-traveler-logo': 'traveler-logo',
+      'check-aerial-logo': 'aerial-logo'
+    };
+    this.onToggleCardChange(typeMap[inputId] || inputId);
   }
 
   onToggleCardChange(type) {
     if (type === 'critical') {
       const isChecked = document.getElementById('check-is-critical')?.checked || false;
       document.getElementById('card-toggle-critical')?.classList.toggle('active', isChecked);
-    } else {
+    } else if (type === 'seated') {
       const isChecked = document.getElementById('check-is-seated')?.checked || false;
       document.getElementById('card-toggle-seated')?.classList.toggle('active', isChecked);
+    } else if (type === 'station-logo') {
+      const isChecked = document.getElementById('check-station-logo')?.checked || false;
+      document.getElementById('card-toggle-station-logo')?.classList.toggle('active', isChecked);
+    } else if (type === 'bin-logo') {
+      const isChecked = document.getElementById('check-bin-logo')?.checked || false;
+      document.getElementById('card-toggle-bin-logo')?.classList.toggle('active', isChecked);
+    } else if (type === 'scrap-logo') {
+      const isChecked = document.getElementById('check-scrap-logo')?.checked || false;
+      document.getElementById('card-toggle-scrap-logo')?.classList.toggle('active', isChecked);
+    } else if (type === 'slot-logo') {
+      const isChecked = document.getElementById('check-slot-logo')?.checked || false;
+      document.getElementById('card-toggle-slot-logo')?.classList.toggle('active', isChecked);
+    } else if (type === 'traveler-logo') {
+      const isChecked = document.getElementById('check-traveler-logo')?.checked || false;
+      document.getElementById('card-toggle-traveler-logo')?.classList.toggle('active', isChecked);
+    } else if (type === 'aerial-logo') {
+      const isChecked = document.getElementById('check-aerial-logo')?.checked || false;
+      document.getElementById('card-toggle-aerial-logo')?.classList.toggle('active', isChecked);
     }
     this.refreshLivePreview();
   }
@@ -568,6 +596,7 @@ class FlexSignageApp {
 
       const isCritical = document.getElementById('check-is-critical')?.checked || false;
       const isSeated = document.getElementById('check-is-seated')?.checked || false;
+      const includeLogo = document.getElementById('check-station-logo')?.checked || false;
 
       const dimTag = document.getElementById('preview-station-dimension-tag');
       if (dimTag) {
@@ -584,6 +613,9 @@ class FlexSignageApp {
 
       const critGroup = document.getElementById('replica-critical-group');
       if (critGroup) critGroup.style.display = isCritical ? 'flex' : 'none';
+
+      const imgLogo = document.getElementById('replica-img-logo');
+      if (imgLogo) imgLogo.style.display = includeLogo ? 'block' : 'none';
 
       const flowGroup = document.getElementById('replica-flow-group');
       if (flowGroup) {
@@ -665,6 +697,13 @@ class FlexSignageApp {
 
       const descBar = document.getElementById('replica-bin-desc-bar');
       const metricsBar = document.getElementById('replica-bin-metrics-bar');
+      const includeBinLogo = document.getElementById('check-bin-logo')?.checked || false;
+
+      const logoSimple = document.getElementById('replica-bin-logo-simple');
+      if (logoSimple) logoSimple.style.display = includeBinLogo ? 'block' : 'none';
+
+      const logoSeg = document.getElementById('replica-bin-logo-seg');
+      if (logoSeg) logoSeg.style.display = includeBinLogo ? 'flex' : 'none';
 
       if (binType === 'minmax') {
         if (descBar) descBar.style.display = 'none';
@@ -696,10 +735,20 @@ class FlexSignageApp {
       };
       const dimTag = document.getElementById('preview-scrap-dimension-tag');
       if (dimTag) dimTag.textContent = sizeLabels[scrapSize] || 'Dimensiones: 9 x 12.5 cm';
+
+      const includeScrapLogo = document.getElementById('check-scrap-logo')?.checked || false;
+      const scrapLogo = document.getElementById('replica-scrap-logo');
+      if (scrapLogo) scrapLogo.style.display = includeScrapLogo ? 'block' : 'none';
+
     } else if (this.currentCategory === 'slot') {
       const num = document.getElementById('slot-number')?.value.trim() || '1';
       const slotNumEl = document.getElementById('replica-slot-num');
       if (slotNumEl) slotNumEl.textContent = num;
+
+      const includeSlotLogo = document.getElementById('check-slot-logo')?.checked || false;
+      const slotLogo = document.getElementById('replica-slot-logo');
+      if (slotLogo) slotLogo.style.display = includeSlotLogo ? 'block' : 'none';
+
     } else if (this.currentCategory === 'traveler') {
       const type = document.getElementById('traveler-type')?.value || 'Carro';
       const typeTag = document.getElementById('replica-traveler-type');
@@ -715,6 +764,11 @@ class FlexSignageApp {
         if (originRow) originRow.style.display = 'flex';
         if (footerNote) footerNote.textContent = 'Solo usar en carros para transporte de WIP';
       }
+
+      const includeTravelerLogo = document.getElementById('check-traveler-logo')?.checked || false;
+      const travelerLogo = document.getElementById('replica-traveler-logo');
+      if (travelerLogo) travelerLogo.style.display = includeTravelerLogo ? 'block' : 'none';
+
     } else if (this.currentCategory === 'aerial') {
       const aerialEn = this.toTitleCase(document.getElementById('aerial-name-en')?.value.trim() || 'PCR Lines');
       const aerialEs = this.toTitleCase(document.getElementById('aerial-name-es')?.value.trim() || 'Lineas de PCR');
@@ -722,6 +776,10 @@ class FlexSignageApp {
       const sub = document.getElementById('replica-aerial-sub');
       if (aerialTxt) aerialTxt.textContent = aerialEn;
       if (sub) sub.textContent = aerialEs;
+
+      const includeAerialLogo = document.getElementById('check-aerial-logo')?.checked || false;
+      const aerialLogo = document.getElementById('replica-aerial-logo');
+      if (aerialLogo) aerialLogo.style.display = includeAerialLogo ? 'block' : 'none';
     } else if (this.currentCategory === 'laptop') {
       const laptopName = this.toTitleCase(document.getElementById('laptop-name')?.value.trim() || 'Nombre y Apellido');
       const vinylTxt = document.getElementById('replica-vinyl-text');
@@ -752,6 +810,7 @@ class FlexSignageApp {
       const copies = parseInt(document.getElementById('station-copies')?.value) || 4;
       const isCritical = document.getElementById('check-is-critical')?.checked || false;
       const isSeated = document.getElementById('check-is-seated')?.checked || false;
+      const includeLogo = document.getElementById('check-station-logo')?.checked || false;
       const stationSize = (subType === 'automatic') ? '13.5x24.5' : '9x12.5';
 
       item.stationType = subType;
@@ -763,11 +822,12 @@ class FlexSignageApp {
       item.flowDirection = this.flowDirection;
       item.isCritical = isCritical;
       item.isSeated = isSeated;
+      item.includeLogo = includeLogo;
       item.copies = copies;
       item.qty = copies;
       item.icon = '🏭';
       item.title = nameEn || 'Estación de Trabajo';
-      item.subtitle = `${nameEs} • ${stationSize} cm • ${subType === 'automatic' ? 'Línea Automática' : (subType === 'standard' ? 'Sin Flujo' : 'Con Flujo')}`;
+      item.subtitle = `${nameEs} • ${stationSize} cm • ${includeLogo ? 'Con Logo Flex' : 'Sin Logo'}`;
 
     } else if (cat === 'bin') {
       const binSize = document.getElementById('bin-size')?.value || '4x10';
@@ -777,6 +837,7 @@ class FlexSignageApp {
       const minVal = document.getElementById('bin-min')?.value.trim() || '20';
       const maxVal = document.getElementById('bin-max')?.value.trim() || '150';
       const rpVal = document.getElementById('bin-rp')?.value.trim() || '50';
+      const includeLogo = document.getElementById('check-bin-logo')?.checked || false;
       const qty = parseInt(document.getElementById('bin-qty')?.value) || 8;
 
       item.binSize = binSize;
@@ -786,59 +847,68 @@ class FlexSignageApp {
       item.minVal = minVal;
       item.maxVal = maxVal;
       item.rpVal = rpVal;
+      item.includeLogo = includeLogo;
       item.photoDataUrl = this.binPhotoDataUrl || null;
       item.qty = qty;
       item.icon = '📦';
       item.title = pn || 'Bin de Material';
-      item.subtitle = `${subType === 'minmax' ? `Min-Max (${minVal}/${maxVal}/${rpVal})` : (commonName || 'Material')} • ${binSize} cm`;
+      item.subtitle = `${subType === 'minmax' ? `Min-Max (${minVal}/${maxVal}/${rpVal})` : (commonName || 'Material')} • ${binSize} cm • ${includeLogo ? 'Con Logo' : 'Sin Logo'}`;
 
     } else if (cat === 'scrap') {
       const scrapSize = document.getElementById('scrap-size')?.value || '9x12.5';
       const scrapLine = this.toTitleCase(document.getElementById('scrap-line')?.value.trim() || 'Planta General');
+      const includeLogo = document.getElementById('check-scrap-logo')?.checked || false;
       const qty = parseInt(document.getElementById('scrap-qty')?.value) || 2;
 
       item.scrapSize = scrapSize;
       item.scrapLine = scrapLine;
+      item.includeLogo = includeLogo;
       item.qty = qty;
       item.icon = '🗑️';
       item.title = `Tarjeta de Scrap (${scrapSize} cm)`;
-      item.subtitle = `Línea: ${scrapLine}`;
+      item.subtitle = `Línea: ${scrapLine} • ${includeLogo ? 'Con Logo' : 'Sin Logo'}`;
 
     } else if (cat === 'slot') {
       const slotNum = document.getElementById('slot-number')?.value.trim() || '1';
       const rackName = this.toTitleCase(document.getElementById('slot-rack-name')?.value.trim() || 'RACK IST');
+      const includeLogo = document.getElementById('check-slot-logo')?.checked || false;
       const qty = parseInt(document.getElementById('slot-qty')?.value) || 3;
 
       item.slotNumber = slotNum;
       item.rackName = rackName;
+      item.includeLogo = includeLogo;
       item.qty = qty;
       item.icon = '🔢';
       item.title = `Slot #${slotNum}`;
-      item.subtitle = `Rack: ${rackName}`;
+      item.subtitle = `Rack: ${rackName} • ${includeLogo ? 'Con Logo' : 'Sin Logo'}`;
 
     } else if (cat === 'traveler') {
       const travelerType = document.getElementById('traveler-type')?.value || 'Carro';
+      const includeLogo = document.getElementById('check-traveler-logo')?.checked || false;
       const qty = parseInt(document.getElementById('traveler-qty')?.value) || 4;
 
       item.travelerType = travelerType;
       item.travelerSize = '9x12.5';
       item.isReusableTemplate = true;
+      item.includeLogo = includeLogo;
       item.qty = qty;
       item.icon = '🛒';
       item.title = `${travelerType} en Flujo WIP (9x12.5 cm)`;
-      item.subtitle = 'Plantilla estándar para llenado manual';
+      item.subtitle = `Plantilla estándar reutilizable • ${includeLogo ? 'Con Logo' : 'Sin Logo'}`;
 
     } else if (cat === 'aerial') {
       const aerialEn = this.toTitleCase(document.getElementById('aerial-name-en')?.value.trim() || '');
       const aerialEs = this.toTitleCase(document.getElementById('aerial-name-es')?.value.trim() || '');
+      const includeLogo = document.getElementById('check-aerial-logo')?.checked || false;
       const qty = parseInt(document.getElementById('aerial-qty')?.value) || 1;
 
       item.aerialNameEn = aerialEn;
       item.aerialNameEs = aerialEs;
+      item.includeLogo = includeLogo;
       item.qty = qty;
       item.icon = '🪧';
       item.title = `Letrero: ${aerialEn || 'Aéreo'}`;
-      item.subtitle = aerialEs || 'Letrero de Acrílico';
+      item.subtitle = `${aerialEs || 'Letrero de Acrílico'} • ${includeLogo ? 'Con Logo' : 'Sin Logo'}`;
 
     } else if (cat === 'laptop') {
       const lapName = this.toTitleCase(document.getElementById('laptop-name')?.value.trim() || '');
@@ -1001,23 +1071,37 @@ class FlexSignageApp {
       const el = document.getElementById(id);
       if (el) el.value = '';
     };
+    const resetToggle = (checkId, type) => {
+      const el = document.getElementById(checkId);
+      if (el) {
+        el.checked = false;
+        this.onToggleCardChange(type);
+      }
+    };
 
     if (this.currentCategory === 'station') {
       safeClear('station-name-en');
       safeClear('station-name-es');
       safeClear('flow-prev-process');
       safeClear('flow-next-process');
+      resetToggle('check-station-logo', 'station-logo');
     } else if (this.currentCategory === 'bin') {
       safeClear('bin-part-number');
       safeClear('bin-common-name');
       this.clearBinPhoto();
+      resetToggle('check-bin-logo', 'bin-logo');
     } else if (this.currentCategory === 'scrap') {
       safeClear('scrap-line');
+      resetToggle('check-scrap-logo', 'scrap-logo');
     } else if (this.currentCategory === 'slot') {
       safeClear('slot-number');
+      resetToggle('check-slot-logo', 'slot-logo');
+    } else if (this.currentCategory === 'traveler') {
+      resetToggle('check-traveler-logo', 'traveler-logo');
     } else if (this.currentCategory === 'aerial') {
       safeClear('aerial-name-en');
       safeClear('aerial-name-es');
+      resetToggle('check-aerial-logo', 'aerial-logo');
     } else if (this.currentCategory === 'laptop') {
       safeClear('laptop-name');
     } else if (this.currentCategory === 'office') {
@@ -1191,21 +1275,9 @@ class FlexSignageApp {
     this.renderKanban();
   }
 
-  renderKanban() {
-    const cols = {
-      pending: document.getElementById('cards-pending'),
-      process: document.getElementById('cards-process'),
-      ready: document.getElementById('cards-ready'),
-      delivered: document.getElementById('cards-delivered')
-    };
-
-    if (!cols.pending) return;
-
-    Object.values(cols).forEach(el => el.innerHTML = '');
-    const counts = { pending: 0, process: 0, ready: 0, delivered: 0 };
-
-    const filtered = this.orders.filter(order => {
-      if (this.activeFilter !== 'all') {
+  getFilteredOrders() {
+    return this.orders.filter(order => {
+      if (this.activeFilter && this.activeFilter !== 'all') {
         const matchesCategory = order.category === this.activeFilter ||
           (order.items && order.items.some(it => it.category === this.activeFilter));
         if (!matchesCategory) return false;
@@ -1220,6 +1292,22 @@ class FlexSignageApp {
       }
       return true;
     });
+  }
+
+  renderKanban() {
+    const cols = {
+      pending: document.getElementById('cards-pending'),
+      process: document.getElementById('cards-process'),
+      ready: document.getElementById('cards-ready'),
+      delivered: document.getElementById('cards-delivered')
+    };
+
+    if (!cols.pending) return;
+
+    Object.values(cols).forEach(el => el.innerHTML = '');
+    const counts = { pending: 0, process: 0, ready: 0, delivered: 0 };
+
+    const filtered = this.getFilteredOrders();
 
     filtered.forEach(order => {
       counts[order.status] = (counts[order.status] || 0) + 1;
@@ -1599,6 +1687,16 @@ class FlexSignageApp {
   }
 
   downloadCurrentPptxPreview() {
+    // Si hay artículos agregados al carrito, descargar el lote completo del carrito
+    if (this.cartItems && this.cartItems.length > 0) {
+      this.generatePptxByOrder({
+        id: 'CARRITO',
+        items: this.cartItems,
+        totalQty: this.cartItems.reduce((acc, it) => acc + (it.qty || 1), 0)
+      });
+      return;
+    }
+
     const category = this.currentCategory;
     let mockOrder = {
       id: 'PREVIEW',
@@ -1617,6 +1715,7 @@ class FlexSignageApp {
       mockOrder.flowDirection = this.flowDirection;
       mockOrder.isCritical = document.getElementById('check-is-critical')?.checked || false;
       mockOrder.isSeated = document.getElementById('check-is-seated')?.checked || false;
+      mockOrder.includeLogo = document.getElementById('check-station-logo')?.checked || false;
       mockOrder.copies = parseInt(document.getElementById('station-copies')?.value) || 4;
     } else if (category === 'bin') {
       mockOrder.binType = document.getElementById('bin-sub-type')?.value || 'simple';
@@ -1627,23 +1726,28 @@ class FlexSignageApp {
       mockOrder.maxVal = document.getElementById('bin-max')?.value.trim() || '150';
       mockOrder.rpVal = document.getElementById('bin-rp')?.value.trim() || '50';
       mockOrder.photoDataUrl = this.binPhotoDataUrl;
+      mockOrder.includeLogo = document.getElementById('check-bin-logo')?.checked || false;
       mockOrder.qty = parseInt(document.getElementById('bin-qty')?.value) || 8;
     } else if (category === 'scrap') {
       mockOrder.scrapSize = document.getElementById('scrap-size')?.value || '9x12.5';
       mockOrder.scrapLine = document.getElementById('scrap-line')?.value.trim() || 'Línea de Planta';
+      mockOrder.includeLogo = document.getElementById('check-scrap-logo')?.checked || false;
       mockOrder.qty = parseInt(document.getElementById('scrap-qty')?.value) || 4;
     } else if (category === 'slot') {
       mockOrder.slotNumber = document.getElementById('slot-number')?.value.trim() || '1';
       mockOrder.rackName = document.getElementById('slot-rack-name')?.value.trim() || 'RACK IST';
+      mockOrder.includeLogo = document.getElementById('check-slot-logo')?.checked || false;
       mockOrder.qty = parseInt(document.getElementById('slot-qty')?.value) || 3;
     } else if (category === 'traveler') {
       mockOrder.travelerType = document.getElementById('traveler-type')?.value || 'Carro';
       mockOrder.travelerSize = '9x12.5';
       mockOrder.isReusableTemplate = true;
+      mockOrder.includeLogo = document.getElementById('check-traveler-logo')?.checked || false;
       mockOrder.qty = parseInt(document.getElementById('traveler-qty')?.value) || 4;
     } else if (category === 'aerial') {
       mockOrder.aerialNameEn = document.getElementById('aerial-name-en')?.value.trim() || 'PCR Lines';
       mockOrder.aerialNameEs = document.getElementById('aerial-name-es')?.value.trim() || 'Lineas de PCR';
+      mockOrder.includeLogo = document.getElementById('check-aerial-logo')?.checked || false;
       mockOrder.qty = parseInt(document.getElementById('aerial-qty')?.value) || 1;
     }
 
@@ -1663,31 +1767,9 @@ class FlexSignageApp {
       pptx.layout = 'LETTER_LANDSCAPE';
 
       const assets = window.FLEX_ASSETS || {};
-
       const items = (order.items && order.items.length > 0) ? order.items : [order];
-      let generatedCount = 0;
 
-      for (const item of items) {
-        if (item.category === 'station') {
-          this.buildPptxStationSlides(pptx, item, assets);
-          generatedCount++;
-        } else if (item.category === 'bin') {
-          this.buildPptxBinSlides(pptx, item, assets);
-          generatedCount++;
-        } else if (item.category === 'scrap') {
-          this.buildPptxScrapSlides(pptx, item, assets);
-          generatedCount++;
-        } else if (item.category === 'slot') {
-          this.buildPptxSlotSlides(pptx, item, assets);
-          generatedCount++;
-        } else if (item.category === 'traveler') {
-          this.buildPptxTravelerSlides(pptx, item, assets);
-          generatedCount++;
-        } else if (item.category === 'aerial') {
-          this.buildPptxAerialSlides(pptx, item, assets);
-          generatedCount++;
-        }
-      }
+      const generatedCount = this.buildPptxPackLayout(pptx, items, assets);
 
       if (generatedCount === 0) {
         alert('Este pedido no contiene señaléticas que requieran formato PowerPoint (ej. vinil de corte o laptop).');
@@ -1718,624 +1800,761 @@ class FlexSignageApp {
     }
   }
 
-  /* 1. Estación de Planta: 9x12.5 cm (4 por hoja) o 13.5x24.5 cm Línea Automática (1 por hoja) */
-  buildPptxStationSlides(pptx, order, assets) {
+  getItemPptxSpecs(item) {
+    const cat = item.category;
+    if (cat === 'station') {
+      const isAuto = (item.stationType === 'automatic' || item.stationSize === '13.5x24.5');
+      if (isAuto) {
+        return { w: 9.65, h: 5.31, isFullSlide: true };
+      }
+      return { w: 4.92, h: 3.54, isFullSlide: false };
+    }
+    if (cat === 'aerial') {
+      return { w: 9.50, h: 5.50, isFullSlide: true };
+    }
+    if (cat === 'bin') {
+      const binSize = item.binSize || '4x10';
+      const sizeMap = {
+        '2x7': { w: 2.76, h: 0.79 },
+        '2.5x9': { w: 3.54, h: 0.98 },
+        '4x10': { w: 3.94, h: 1.57 },
+        '6x20': { w: 7.87, h: 2.36 }
+      };
+      const dim = sizeMap[binSize] || sizeMap['4x10'];
+      return { w: dim.w, h: dim.h, isFullSlide: false };
+    }
+    if (cat === 'scrap') {
+      const scrapSize = item.scrapSize || '9x12.5';
+      const sizeMap = {
+        '2x7': { w: 2.76, h: 0.79 },
+        '2.5x9': { w: 3.54, h: 0.98 },
+        '4x10': { w: 3.94, h: 1.57 },
+        '6x20': { w: 7.87, h: 2.36 },
+        '9x12.5': { w: 4.92, h: 3.54 }
+      };
+      const dim = sizeMap[scrapSize] || sizeMap['9x12.5'];
+      return { w: dim.w, h: dim.h, isFullSlide: false };
+    }
+    if (cat === 'slot') {
+      return { w: 3.00, h: 6.50, isFullSlide: false };
+    }
+    if (cat === 'traveler') {
+      return { w: 4.92, h: 3.54, isFullSlide: false };
+    }
+    return null;
+  }
+
+  /* ========================================================================
+     SMART SHELF-PACKING GENERATOR
+     Aprovecha al 100% el espacio de las hojas Carta Horizontal (11 x 8.5 in)
+     Agrupa y acomoda identificaciones en filas y hojas compartidas,
+     respetando líneas de corte limpias tipo guillotina.
+     ======================================================================== */
+  buildPptxPackLayout(pptx, itemsOrOrders, assets) {
+    let rawItems = [];
+
+    const extractItems = (list) => {
+      if (!list) return;
+      const arr = Array.isArray(list) ? list : [list];
+      for (const entry of arr) {
+        if (!entry) continue;
+        if (entry.items && Array.isArray(entry.items) && entry.items.length > 0) {
+          extractItems(entry.items);
+        } else {
+          rawItems.push(entry);
+        }
+      }
+    };
+    extractItems(itemsOrOrders);
+
+    let unitsToPack = [];
+
+    for (const item of rawItems) {
+      const specs = this.getItemPptxSpecs(item);
+      if (!specs) continue;
+      const qty = parseInt(item.qty || item.copies) || 1;
+      for (let q = 0; q < qty; q++) {
+        unitsToPack.push({
+          item: item,
+          category: item.category,
+          w: specs.w,
+          h: specs.h,
+          isFullSlide: specs.isFullSlide,
+          slotOffset: q
+        });
+      }
+    }
+
+    if (unitsToPack.length === 0) return 0;
+
+    // 1. Tarjetas de página completa (Línea Automática 13.5x24.5 o Letrero Aéreo 9.5x5.5)
+    const fullSlideUnits = unitsToPack.filter(u => u.isFullSlide);
+    for (const unit of fullSlideUnits) {
+      const slide = pptx.addSlide();
+      const p = {
+        x: Math.max(0.4, (11.0 - unit.w) / 2),
+        y: Math.max(0.4, (8.5 - unit.h) / 2),
+        w: unit.w,
+        h: unit.h
+      };
+      this.drawPptxCard(slide, p, unit, assets, pptx);
+    }
+
+    // 2. Tarjetas empaquetables en hojas compartidas
+    const packableUnits = unitsToPack.filter(u => !u.isFullSlide);
+    // Ordenar de mayor a menor altura para crear estantes (filas) uniformes y compactas
+    packableUnits.sort((a, b) => (b.h - a.h) || (b.w - a.w));
+
+    const PAGE_W = 11.0;
+    const PAGE_H = 8.5;
+    const MARGIN_LEFT = 0.50;
+    const MARGIN_RIGHT = 0.50;
+    const MARGIN_TOP = 0.45;
+    const MARGIN_BOTTOM = 0.45;
+    const MAX_X = PAGE_W - MARGIN_RIGHT; // 10.50 in
+    const MAX_Y = PAGE_H - MARGIN_BOTTOM; // 8.05 in
+
+    const getGapX = (w) => {
+      if (w >= 4.90) return 0.16;
+      if (w >= 3.80) return 0.25;
+      if (w >= 3.00) return 0.25;
+      return 0.20;
+    };
+
+    const getGapY = (h) => {
+      if (h >= 3.00) return 0.20;
+      if (h < 1.00) return 0.15;
+      return 0.20;
+    };
+
+    let slides = [];
+    let currentSlideObj = null;
+
+    for (const unit of packableUnits) {
+      const w = unit.w;
+      const h = unit.h;
+      const gapX = getGapX(w);
+      const gapY = getGapY(h);
+
+      let placed = false;
+
+      // Regla 1: Colocar en el estante activo de la hoja si la altura coincide y cabe horizontalmente
+      if (currentSlideObj && currentSlideObj.shelves.length > 0) {
+        const lastShelf = currentSlideObj.shelves[currentSlideObj.shelves.length - 1];
+        if (Math.abs(lastShelf.h - h) < 0.05 && (lastShelf.currentX + w <= MAX_X + 0.01)) {
+          const p = { x: lastShelf.currentX, y: lastShelf.y, w: w, h: h };
+          this.drawPptxCard(currentSlideObj.slide, p, unit, assets, pptx);
+          lastShelf.currentX += w + gapX;
+          placed = true;
+        }
+      }
+
+      // Regla 2: Iniciar una nueva fila en la hoja actual si cabe verticalmente
+      if (!placed && currentSlideObj) {
+        const lastShelf = currentSlideObj.shelves[currentSlideObj.shelves.length - 1];
+        const nextY = lastShelf ? (lastShelf.y + lastShelf.h + lastShelf.gapY) : MARGIN_TOP;
+        if (nextY + h <= MAX_Y + 0.01) {
+          const newShelf = {
+            y: nextY,
+            h: h,
+            currentX: MARGIN_LEFT + w + gapX,
+            gapY: gapY
+          };
+          currentSlideObj.shelves.push(newShelf);
+          const p = { x: MARGIN_LEFT, y: nextY, w: w, h: h };
+          this.drawPptxCard(currentSlideObj.slide, p, unit, assets, pptx);
+          placed = true;
+        }
+      }
+
+      // Regla 3: Si no hay espacio vertical para otra fila, aprovechar huecos horizontales en filas previas
+      if (!placed && currentSlideObj) {
+        for (const shelf of currentSlideObj.shelves) {
+          if (shelf.h >= h - 0.05 && (shelf.currentX + w <= MAX_X + 0.01)) {
+            const p = { x: shelf.currentX, y: shelf.y, w: w, h: h };
+            this.drawPptxCard(currentSlideObj.slide, p, unit, assets, pptx);
+            shelf.currentX += w + gapX;
+            placed = true;
+            break;
+          }
+        }
+      }
+
+      // Regla 4: Si no cupo en la hoja actual, abrir una NUEVA hoja
+      if (!placed) {
+        const newSlide = pptx.addSlide();
+        const newShelf = {
+          y: MARGIN_TOP,
+          h: h,
+          currentX: MARGIN_LEFT + w + gapX,
+          gapY: gapY
+        };
+        currentSlideObj = {
+          slide: newSlide,
+          shelves: [newShelf]
+        };
+        slides.push(currentSlideObj);
+        const p = { x: MARGIN_LEFT, y: MARGIN_TOP, w: w, h: h };
+        this.drawPptxCard(newSlide, p, unit, assets, pptx);
+      }
+    }
+
+    return unitsToPack.length;
+  }
+
+  drawPptxCard(slide, p, unit, assets, pptx) {
+    const item = unit.item;
+    const cat = unit.category;
+    if (cat === 'station') {
+      this.drawPptxStation(slide, p, item, assets, pptx);
+    } else if (cat === 'bin') {
+      this.drawPptxBin(slide, p, item, assets, pptx);
+    } else if (cat === 'scrap') {
+      this.drawPptxScrap(slide, p, item, assets, pptx);
+    } else if (cat === 'slot') {
+      const startNum = parseInt(item.slotNumber) || 1;
+      this.drawPptxSlot(slide, p, item, assets, pptx, startNum + (unit.slotOffset || 0));
+    } else if (cat === 'traveler') {
+      this.drawPptxTraveler(slide, p, item, assets, pptx);
+    } else if (cat === 'aerial') {
+      this.drawPptxAerial(slide, p, item, assets, pptx);
+    }
+  }
+
+  /* 1. Estación de Planta: 9x12.5 cm o 13.5x24.5 cm Línea Automática */
+  drawPptxStation(slide, p, order, assets, pptx) {
     const shapeRect = (pptx.shapes && pptx.shapes.RECTANGLE) || (pptx.ShapeType && pptx.ShapeType.rect) || 'rect';
     const isAuto = (order.stationType === 'automatic' || order.stationSize === '13.5x24.5');
 
     if (isAuto) {
-      // Formato B29 Estación Línea Automática: 13.5 x 24.5 cm (Slide 24)
-      const copiesNeeded = order.copies || 1;
-      for (let s = 0; s < copiesNeeded; s++) {
-        const slide = pptx.addSlide();
-        const p = { x: 0.67, y: 1.59, w: 9.65, h: 5.31 };
-
-        slide.addShape(shapeRect, {
-          x: p.x, y: p.y, w: p.w, h: p.h,
-          line: { color: '009ADD', width: 4.0 },
-          fill: { color: 'FFFFFF' }
-        });
-
-        if (assets.rohsBadge) {
-          slide.addImage({
-            data: assets.rohsBadge,
-            x: p.x + 8.40, y: p.y + 0.20, w: 1.00, h: 1.05
-          });
-        }
-
-        if (order.isSeated && assets.seatedOperator) {
-          slide.addImage({
-            data: assets.seatedOperator,
-            x: p.x + 3.20, y: p.y + 0.20, w: 0.52, h: 1.05
-          });
-        }
-
-        if (order.isCritical) {
-          if (assets.criticalWarningBase64) {
-            slide.addImage({
-              data: assets.criticalWarningBase64,
-              x: p.x + 4.90, y: p.y + 0.35, w: 0.85, h: 0.75
-            });
-          }
-          slide.addText('Critical\nStation', {
-            x: p.x + 5.85, y: p.y + 0.28, w: 1.90, h: 0.85,
-            fontFace: 'Century Gothic', fontSize: 16, bold: true, color: '000000', lineSpacing: 18
-          });
-        }
-
-        const titleEn = this.toTitleCase(order.nameEn || 'Process Name');
-        const titleEs = this.toTitleCase(order.nameEs || 'Nombre de Proceso');
-
-        slide.addText(titleEn, {
-          x: p.x + 0.30, y: p.y + 1.45, w: p.w - 0.60, h: 0.90,
-          fontFace: 'Century Gothic', fontSize: 36, bold: true, color: '000000', align: 'center', valign: 'middle'
-        });
-
-        slide.addText(titleEs, {
-          x: p.x + 0.30, y: p.y + 2.40, w: p.w - 0.60, h: 0.75,
-          fontFace: 'Century Gothic', fontSize: 24, color: '333333', align: 'center', valign: 'middle'
-        });
-
-        const isReverse = (order.flowDirection === 'rl');
-        const leftLabel = isReverse ? this.toTitleCase(order.nextProcess || 'Next Process') : this.toTitleCase(order.prevProcess || 'Previous Process');
-        const rightLabel = isReverse ? this.toTitleCase(order.prevProcess || 'Previous Process') : this.toTitleCase(order.nextProcess || 'Next Process');
-
-        slide.addText(leftLabel, {
-          x: p.x + 0.40, y: p.y + 3.75, w: 3.60, h: 0.70,
-          fontFace: 'Century Gothic', fontSize: 18, bold: true, color: '000000', align: 'center', valign: 'middle'
-        });
-
-        if (assets.flowArrow) {
-          slide.addImage({
-            data: assets.flowArrow,
-            x: p.x + 4.10, y: p.y + 3.65, w: 1.45, h: 0.90,
-            rotate: isReverse ? 180 : 0
-          });
-        }
-
-        slide.addText(rightLabel, {
-          x: p.x + 5.65, y: p.y + 3.75, w: 3.60, h: 0.70,
-          fontFace: 'Century Gothic', fontSize: 18, bold: true, color: '000000', align: 'center', valign: 'middle'
-        });
-
-        if (assets.flexLogo) {
-          slide.addImage({
-            data: assets.flexLogo,
-            x: p.x + 7.85, y: p.y + 4.55, w: 1.50, h: 0.65
-          });
-        }
-      }
-      return;
-    }
-
-    // Formato Estándar 9 x 12.5 cm (Slides 8 y 10): 4 por hoja
-    const cardPositions = [
-      { x: 0.49, y: 0.12, w: 4.92, h: 3.54 },
-      { x: 5.55, y: 0.12, w: 4.92, h: 3.54 },
-      { x: 0.49, y: 3.75, w: 4.92, h: 3.54 },
-      { x: 5.55, y: 3.75, w: 4.92, h: 3.54 }
-    ];
-
-    const copiesNeeded = order.copies || 4;
-    const totalSlides = Math.ceil(copiesNeeded / 4);
-
-    let placed = 0;
-    for (let s = 0; s < totalSlides; s++) {
-      const slide = pptx.addSlide();
-
-      for (let pos = 0; pos < 4 && placed < copiesNeeded; pos++, placed++) {
-        const p = cardPositions[pos];
-
-        slide.addShape(shapeRect, {
-          x: p.x, y: p.y, w: p.w, h: p.h,
-          line: { color: '009ADD', width: 3.0 },
-          fill: { color: 'FFFFFF' }
-        });
-
-        if (assets.rohsBadge) {
-          slide.addImage({
-            data: assets.rohsBadge,
-            x: p.x + 4.15, y: p.y + 0.12, w: 0.62, h: 0.64
-          });
-        }
-
-        if (order.isSeated && assets.seatedOperator) {
-          slide.addImage({
-            data: assets.seatedOperator,
-            x: p.x + 1.65, y: p.y + 0.12, w: 0.31, h: 0.64
-          });
-        }
-
-        if (order.isCritical) {
-          if (assets.criticalWarningBase64) {
-            slide.addImage({
-              data: assets.criticalWarningBase64,
-              x: p.x + 2.50, y: p.y + 0.22, w: 0.46, h: 0.41
-            });
-          }
-          slide.addText('Critical\nStation', {
-            x: p.x + 2.98, y: p.y + 0.18, w: 1.00, h: 0.47,
-            fontFace: 'Century Gothic', fontSize: 9.5, bold: true, color: '000000', lineSpacing: 11
-          });
-        }
-
-        const isFlow = (order.stationType !== 'standard');
-        const titleTopY = isFlow ? (p.y + 0.95) : (p.y + 1.25);
-
-        const titleEn = this.toTitleCase(order.nameEn || 'Process Name');
-        const titleEs = this.toTitleCase(order.nameEs || 'Nombre de Proceso');
-
-        slide.addText(titleEn, {
-          x: p.x + 0.20, y: titleTopY, w: p.w - 0.40, h: 0.55,
-          fontFace: 'Century Gothic', fontSize: 20, bold: true, color: '000000', align: 'center', valign: 'middle'
-        });
-
-        slide.addText(titleEs, {
-          x: p.x + 0.20, y: titleTopY + 0.52, w: p.w - 0.40, h: 0.45,
-          fontFace: 'Century Gothic', fontSize: 15, color: '333333', align: 'center', valign: 'middle'
-        });
-
-        if (isFlow) {
-          const isReverse = (order.flowDirection === 'rl');
-          const leftLabel = isReverse ? this.toTitleCase(order.nextProcess || 'Next Process') : this.toTitleCase(order.prevProcess || 'Previous Process');
-          const rightLabel = isReverse ? this.toTitleCase(order.prevProcess || 'Previous Process') : this.toTitleCase(order.nextProcess || 'Next Process');
-
-          slide.addText(leftLabel, {
-            x: p.x + 0.10, y: p.y + 2.34, w: 1.90, h: 0.45,
-            fontFace: 'Century Gothic', fontSize: 11, bold: true, color: '000000', align: 'center', valign: 'middle'
-          });
-
-          if (assets.flowArrow) {
-            slide.addImage({
-              data: assets.flowArrow,
-              x: p.x + 2.05, y: p.y + 2.28, w: 0.82, h: 0.54,
-              rotate: isReverse ? 180 : 0
-            });
-          }
-
-          slide.addText(rightLabel, {
-            x: p.x + 2.92, y: p.y + 2.34, w: 1.90, h: 0.45,
-            fontFace: 'Century Gothic', fontSize: 11, bold: true, color: '000000', align: 'center', valign: 'middle'
-          });
-        }
-
-        if (assets.flexLogo) {
-          slide.addImage({
-            data: assets.flexLogo,
-            x: p.x + 4.00, y: p.y + 2.98, w: 0.78, h: 0.40
-          });
-        }
-      }
-    }
-  }
-
-  /* 2. Bines de Material (Slides 14 a 17): 4 Tamaños oficiales (2x7, 2.5x9, 4x10, 6x20 cm) */
-  buildPptxBinSlides(pptx, order, assets) {
-    const shapeRect = (pptx.shapes && pptx.shapes.RECTANGLE) || (pptx.ShapeType && pptx.ShapeType.rect) || 'rect';
-    const size = order.binSize || '4x10';
-    const sizeConfig = {
-      '2x7': { w: 2.76, h: 0.79, cols: 3, rows: 8, marginX: 0.96, marginY: 0.56, gapX: 0.40, gapY: 0.15 },
-      '2.5x9': { w: 3.54, h: 0.98, cols: 2, rows: 6, marginX: 1.56, marginY: 0.81, gapX: 0.80, gapY: 0.20 },
-      '4x10': { w: 3.94, h: 1.57, cols: 2, rows: 4, marginX: 1.16, marginY: 0.73, gapX: 0.80, gapY: 0.25 },
-      '6x20': { w: 7.87, h: 2.36, cols: 1, rows: 3, marginX: 1.56, marginY: 0.41, gapX: 0.00, gapY: 0.30 }
-    };
-
-    const cfg = sizeConfig[size] || sizeConfig['4x10'];
-    const qty = order.qty || (cfg.cols * cfg.rows);
-    const totalSlides = Math.ceil(qty / (cfg.cols * cfg.rows));
-
-    const pn = (order.partNumber || 'TYEH-1144337_00-BW').toUpperCase();
-    const barcodeData = this.generateBarcodeDataUrl(pn);
-    const qrData = this.generateQrDataUrl(pn);
-
-    let placed = 0;
-    for (let s = 0; s < totalSlides; s++) {
-      const slide = pptx.addSlide();
-
-      for (let r = 0; r < cfg.rows && placed < qty; r++) {
-        for (let c = 0; c < cfg.cols && placed < qty; c++, placed++) {
-          const x = cfg.marginX + c * (cfg.w + cfg.gapX);
-          const y = cfg.marginY + r * (cfg.h + cfg.gapY);
-          const w = cfg.w;
-          const h = cfg.h;
-
-          // 1. Marco exterior
-          slide.addShape(shapeRect, {
-            x: x, y: y, w: w, h: h,
-            line: { color: 'CBD5E1', width: 0.8 },
-            fill: { color: 'FFFFFF' }
-          });
-
-          // 2. Columna izquierda: Foto del Material
-          const photoW = w * 0.28;
-          slide.addShape(shapeRect, {
-            x: x, y: y, w: photoW, h: h,
-            line: { color: 'E2E8F0', width: 0.5 },
-            fill: { color: 'F8FAFC' }
-          });
-
-          if (order.photoDataUrl) {
-            slide.addImage({
-              data: order.photoDataUrl,
-              x: x + 0.04, y: y + 0.04, w: photoW - 0.08, h: h - 0.08,
-              sizing: { type: 'contain' }
-            });
-          } else {
-            slide.addText('Foto', {
-              x: x, y: y + h * 0.35, w: photoW, h: h * 0.30,
-              fontFace: 'Century Gothic', fontSize: Math.max(6.5, h * 5.5), color: '94A3B8', align: 'center', valign: 'middle'
-            });
-          }
-
-          // 3. Columna derecha: Códigos, P/N y Banner Inferior
-          const mainX = x + photoW;
-          const mainW = w - photoW;
-
-          // Fila superior: Barcode + QR + RoHS
-          const topH = h * 0.34;
-          const barcodeW = mainW * 0.48;
-          slide.addImage({
-            data: barcodeData,
-            x: mainX + 0.06, y: y + 0.03, w: barcodeW, h: topH - 0.04
-          });
-
-          const qrSize = Math.min(topH - 0.04, 0.45);
-          slide.addImage({
-            data: qrData,
-            x: mainX + barcodeW + 0.10, y: y + 0.03, w: qrSize, h: qrSize
-          });
-
-          if (assets.rohsBadge) {
-            const rohsSize = Math.min(topH - 0.02, 0.44);
-            slide.addImage({
-              data: assets.rohsBadge,
-              x: mainX + mainW - rohsSize - 0.05, y: y + 0.03, w: rohsSize, h: rohsSize
-            });
-          }
-
-          // Fila media: Part Number
-          const pnY = y + topH;
-          const pnH = h * 0.33;
-          const pnFontSize = Math.max(8, Math.min(Math.round(h * 11), 16));
-          slide.addText(pn, {
-            x: mainX + 0.08, y: pnY, w: mainW - 0.12, h: pnH,
-            fontFace: 'Century Gothic', fontSize: pnFontSize, bold: true, color: '000000', align: 'left', valign: 'middle'
-          });
-
-          // Fila inferior
-          const botY = y + topH + pnH;
-          const botH = h - (topH + pnH);
-
-          if (order.binType === 'minmax') {
-            // Formato Min-Max (Slides 16-17): 4 bloques coloreados
-            const wLogo = mainW * 0.25;
-            const wMin = mainW * 0.25;
-            const wMax = mainW * 0.25;
-            const wRp = mainW - (wLogo + wMin + wMax);
-
-            // Bloque Flex Logo
-            slide.addShape(shapeRect, {
-              x: mainX, y: botY, w: wLogo, h: botH,
-              fill: { color: '009ADD' }, line: { color: '009ADD', width: 0 }
-            });
-            slide.addText('flex', {
-              x: mainX, y: botY, w: wLogo, h: botH,
-              fontFace: 'Century Gothic', fontSize: Math.max(7, botH * 14), bold: true, color: 'FFFFFF', align: 'center', valign: 'middle'
-            });
-
-            // Bloque Min (Rojo)
-            slide.addShape(shapeRect, {
-              x: mainX + wLogo, y: botY, w: wMin, h: botH,
-              fill: { color: 'DC2626' }, line: { color: 'DC2626', width: 0 }
-            });
-            slide.addText(`Min: ${order.minVal || '20'}`, {
-              x: mainX + wLogo, y: botY, w: wMin, h: botH,
-              fontFace: 'Century Gothic', fontSize: Math.max(6.5, botH * 13), bold: true, color: 'FFFFFF', align: 'center', valign: 'middle'
-            });
-
-            // Bloque Max (Verde)
-            slide.addShape(shapeRect, {
-              x: mainX + wLogo + wMin, y: botY, w: wMax, h: botH,
-              fill: { color: '16A34A' }, line: { color: '16A34A', width: 0 }
-            });
-            slide.addText(`Max: ${order.maxVal || '150'}`, {
-              x: mainX + wLogo + wMin, y: botY, w: wMax, h: botH,
-              fontFace: 'Century Gothic', fontSize: Math.max(6.5, botH * 13), bold: true, color: 'FFFFFF', align: 'center', valign: 'middle'
-            });
-
-            // Bloque RP (Ámbar)
-            slide.addShape(shapeRect, {
-              x: mainX + wLogo + wMin + wMax, y: botY, w: wRp, h: botH,
-              fill: { color: 'D97706' }, line: { color: 'D97706', width: 0 }
-            });
-            slide.addText(`RP: ${order.rpVal || '50'}`, {
-              x: mainX + wLogo + wMin + wMax, y: botY, w: wRp, h: botH,
-              fontFace: 'Century Gothic', fontSize: Math.max(6.5, botH * 13), bold: true, color: 'FFFFFF', align: 'center', valign: 'middle'
-            });
-
-          } else {
-            // Formato Simple (Slides 14-15): Banner Azul con Nombre Común y Logo Flex
-            slide.addShape(shapeRect, {
-              x: mainX, y: botY, w: mainW, h: botH,
-              fill: { color: '009ADD' }, line: { color: '009ADD', width: 0 }
-            });
-
-            const descText = this.toTitleCase(order.commonName || 'Material');
-            slide.addText(descText, {
-              x: mainX + 0.08, y: botY, w: mainW - 0.70, h: botH,
-              fontFace: 'Century Gothic', fontSize: Math.max(7, botH * 14), bold: true, color: 'FFFFFF', align: 'left', valign: 'middle'
-            });
-
-            slide.addText('flex', {
-              x: mainX + mainW - 0.65, y: botY, w: 0.60, h: botH,
-              fontFace: 'Century Gothic', fontSize: Math.max(7.5, botH * 16), bold: true, color: 'FFFFFF', align: 'right', valign: 'middle'
-            });
-          }
-        }
-      }
-    }
-  }
-
-  /* 3. Tarjetas de Scrap (Slides 18-20): 5 Tamaños oficiales, Tarjeta Roja Oficial */
-  buildPptxScrapSlides(pptx, order, assets) {
-    const shapeRect = (pptx.shapes && pptx.shapes.RECTANGLE) || (pptx.ShapeType && pptx.ShapeType.rect) || 'rect';
-    const scrapSize = order.scrapSize || '9x12.5';
-
-    if (scrapSize === '9x12.5') {
-      // 9 x 12.5 cm: 4 tarjetas por hoja carta horizontal
-      const cardPositions = [
-        { x: 0.49, y: 0.45, w: 4.92, h: 3.54 },
-        { x: 5.59, y: 0.45, w: 4.92, h: 3.54 },
-        { x: 0.49, y: 4.30, w: 4.92, h: 3.54 },
-        { x: 5.59, y: 4.30, w: 4.92, h: 3.54 }
-      ];
-
-      const qty = order.qty || 4;
-      const totalSlides = Math.ceil(qty / 4);
-      let placed = 0;
-
-      for (let s = 0; s < totalSlides; s++) {
-        const slide = pptx.addSlide();
-
-        for (let pos = 0; pos < 4 && placed < qty; pos++, placed++) {
-          const p = cardPositions[pos];
-
-          // Fondo rojo oficial
-          slide.addShape(shapeRect, {
-            x: p.x, y: p.y, w: p.w, h: p.h,
-            fill: { color: 'DC2626' },
-            line: { color: 'B91C1C', width: 1.5 }
-          });
-
-          // RoHS en la esquina superior derecha
-          if (assets.rohsBadge) {
-            slide.addImage({
-              data: assets.rohsBadge,
-              x: p.x + p.w - 0.85, y: p.y + 0.20, w: 0.65, h: 0.68
-            });
-          }
-
-          // Texto "Scrap" en blanco, grande y centrado
-          slide.addText('Scrap', {
-            x: p.x + 0.20, y: p.y + 1.05, w: p.w - 0.40, h: 1.30,
-            fontFace: 'Century Gothic', fontSize: 62, bold: true, color: 'FFFFFF', align: 'center', valign: 'middle'
-          });
-
-          // Logo Flex blanco abajo a la derecha
-          slide.addText('flex', {
-            x: p.x + p.w - 1.40, y: p.y + p.h - 0.70, w: 1.20, h: 0.50,
-            fontFace: 'Century Gothic', fontSize: 26, bold: true, color: 'FFFFFF', align: 'right', valign: 'middle'
-          });
-        }
-      }
-      return;
-    }
-
-    // Otros 4 tamaños en rejilla: 2x7, 2.5x9, 4x10, 6x20 cm
-    const sizeConfig = {
-      '2x7': { w: 2.76, h: 0.79, cols: 3, rows: 8, marginX: 0.96, marginY: 0.56, gapX: 0.40, gapY: 0.15 },
-      '2.5x9': { w: 3.54, h: 0.98, cols: 2, rows: 6, marginX: 1.56, marginY: 0.81, gapX: 0.80, gapY: 0.20 },
-      '4x10': { w: 3.94, h: 1.57, cols: 2, rows: 4, marginX: 1.16, marginY: 0.73, gapX: 0.80, gapY: 0.25 },
-      '6x20': { w: 7.87, h: 2.36, cols: 1, rows: 3, marginX: 1.56, marginY: 0.41, gapX: 0.00, gapY: 0.30 }
-    };
-
-    const cfg = sizeConfig[scrapSize] || sizeConfig['4x10'];
-    const qty = order.qty || (cfg.cols * cfg.rows);
-    const totalSlides = Math.ceil(qty / (cfg.cols * cfg.rows));
-    let placed = 0;
-
-    for (let s = 0; s < totalSlides; s++) {
-      const slide = pptx.addSlide();
-
-      for (let r = 0; r < cfg.rows && placed < qty; r++) {
-        for (let c = 0; c < cfg.cols && placed < qty; c++, placed++) {
-          const x = cfg.marginX + c * (cfg.w + cfg.gapX);
-          const y = cfg.marginY + r * (cfg.h + cfg.gapY);
-
-          slide.addShape(shapeRect, {
-            x: x, y: y, w: cfg.w, h: cfg.h,
-            fill: { color: 'DC2626' },
-            line: { color: 'B91C1C', width: 1 }
-          });
-
-          if (assets.rohsBadge) {
-            const rohsH = Math.min(cfg.h * 0.35, 0.45);
-            slide.addImage({
-              data: assets.rohsBadge,
-              x: x + cfg.w - rohsH - 0.06, y: y + 0.04, w: rohsH, h: rohsH
-            });
-          }
-
-          const scrapFontSize = Math.max(12, Math.min(Math.round(cfg.h * 24), 38));
-          slide.addText('Scrap', {
-            x: x + 0.10, y: y + (cfg.h - cfg.h * 0.5) / 2, w: cfg.w - 0.20, h: cfg.h * 0.50,
-            fontFace: 'Century Gothic', fontSize: scrapFontSize, bold: true, color: 'FFFFFF', align: 'center', valign: 'middle'
-          });
-
-          slide.addText('flex', {
-            x: x + cfg.w - 0.70, y: y + cfg.h - 0.35, w: 0.65, h: 0.30,
-            fontFace: 'Century Gothic', fontSize: Math.max(7, cfg.h * 8), bold: true, color: 'FFFFFF', align: 'right', valign: 'middle'
-          });
-        }
-      }
-    }
-  }
-
-  /* 4. Slot con esquinas rectas */
-  buildPptxSlotSlides(pptx, order, assets) {
-    const shapeRect = (pptx.shapes && pptx.shapes.RECTANGLE) || (pptx.ShapeType && pptx.ShapeType.rect) || 'rect';
-    const slide = pptx.addSlide();
-    const positions = [
-      { x: 0.6, y: 1.0, w: 3.0, h: 6.5 },
-      { x: 4.0, y: 1.0, w: 3.0, h: 6.5 },
-      { x: 7.4, y: 1.0, w: 3.0, h: 6.5 }
-    ];
-
-    for (let i = 0; i < 3; i++) {
-      const p = positions[i];
       slide.addShape(shapeRect, {
         x: p.x, y: p.y, w: p.w, h: p.h,
-        line: { color: '009ADD', width: 3 },
+        line: { color: '009ADD', width: 4.0 },
         fill: { color: 'FFFFFF' }
       });
 
       if (assets.rohsBadge) {
         slide.addImage({
           data: assets.rohsBadge,
-          x: p.x + p.w - 0.8, y: p.y + 0.3, w: 0.6, h: 0.62
+          x: p.x + p.w - 1.25, y: p.y + 0.20, w: 1.00, h: 1.05
         });
       }
 
-      slide.addText(this.toTitleCase(order.rackName || 'RACK IST'), {
-        x: p.x + 0.3, y: p.y + 0.4, w: 1.8, h: 0.4,
-        fontFace: 'Century Gothic', fontSize: 12, bold: true, color: '64748B'
+      if (order.isSeated && assets.seatedOperator) {
+        slide.addImage({
+          data: assets.seatedOperator,
+          x: p.x + p.w * 0.33, y: p.y + 0.20, w: 0.52, h: 1.05
+        });
+      }
+
+      if (order.isCritical) {
+        if (assets.criticalWarningBase64) {
+          slide.addImage({
+            data: assets.criticalWarningBase64,
+            x: p.x + p.w * 0.50, y: p.y + 0.35, w: 0.85, h: 0.75
+          });
+        }
+        slide.addText('Critical\nStation', {
+          x: p.x + p.w * 0.60, y: p.y + 0.28, w: 1.90, h: 0.85,
+          fontFace: 'Century Gothic', fontSize: 16, bold: true, color: '000000', lineSpacing: 18
+        });
+      }
+
+      const titleEn = this.toTitleCase(order.nameEn || 'Process Name');
+      const titleEs = this.toTitleCase(order.nameEs || 'Nombre de Proceso');
+
+      slide.addText(titleEn, {
+        x: p.x + 0.30, y: p.y + 1.45, w: p.w - 0.60, h: 0.90,
+        fontFace: 'Century Gothic', fontSize: 36, bold: true, color: '000000', align: 'center', valign: 'middle'
       });
 
-      slide.addText(String(parseInt(order.slotNumber || 1) + i), {
-        x: p.x + 0.2, y: p.y + 2.0, w: p.w - 0.4, h: 2.2,
-        fontFace: 'Century Gothic', fontSize: 90, bold: true, color: '000000', align: 'center', valign: 'middle'
+      slide.addText(titleEs, {
+        x: p.x + 0.30, y: p.y + 2.40, w: p.w - 0.60, h: 0.75,
+        fontFace: 'Century Gothic', fontSize: 24, color: '333333', align: 'center', valign: 'middle'
       });
 
-      slide.addText('SLOT', {
-        x: p.x + 0.2, y: p.y + 4.4, w: p.w - 0.4, h: 0.8,
-        fontFace: 'Century Gothic', fontSize: 28, bold: true, color: '009ADD', align: 'center'
+      const isReverse = (order.flowDirection === 'rl');
+      const leftLabel = isReverse ? this.toTitleCase(order.nextProcess || 'Next Process') : this.toTitleCase(order.prevProcess || 'Previous Process');
+      const rightLabel = isReverse ? this.toTitleCase(order.prevProcess || 'Previous Process') : this.toTitleCase(order.nextProcess || 'Next Process');
+
+      slide.addText(leftLabel, {
+        x: p.x + 0.40, y: p.y + 3.75, w: 3.60, h: 0.70,
+        fontFace: 'Century Gothic', fontSize: 18, bold: true, color: '000000', align: 'center', valign: 'middle'
       });
 
-      if (assets.flexLogo) {
+      if (assets.flowArrow) {
+        slide.addImage({
+          data: assets.flowArrow,
+          x: p.x + p.w * 0.42, y: p.y + 3.65, w: 1.45, h: 0.90,
+          rotate: isReverse ? 0 : 180
+        });
+      }
+
+      slide.addText(rightLabel, {
+        x: p.x + p.w - 4.00, y: p.y + 3.75, w: 3.60, h: 0.70,
+        fontFace: 'Century Gothic', fontSize: 18, bold: true, color: '000000', align: 'center', valign: 'middle'
+      });
+
+      if (order.includeLogo && assets.flexLogo) {
         slide.addImage({
           data: assets.flexLogo,
-          x: p.x + p.w - 1.1, y: p.y + p.h - 0.7, w: 0.85, h: 0.42
+          x: p.x + p.w - 1.80, y: p.y + p.h - 0.76, w: 1.50, h: 0.65
+        });
+      }
+      return;
+    }
+
+    // Formato Estándar 9 x 12.5 cm
+    slide.addShape(shapeRect, {
+      x: p.x, y: p.y, w: p.w, h: p.h,
+      line: { color: '009ADD', width: 3.0 },
+      fill: { color: 'FFFFFF' }
+    });
+
+    if (assets.rohsBadge) {
+      slide.addImage({
+        data: assets.rohsBadge,
+        x: p.x + p.w - 0.77, y: p.y + 0.12, w: 0.62, h: 0.64
+      });
+    }
+
+    if (order.isSeated && assets.seatedOperator) {
+      slide.addImage({
+        data: assets.seatedOperator,
+        x: p.x + 1.65, y: p.y + 0.12, w: 0.31, h: 0.64
+      });
+    }
+
+    if (order.isCritical) {
+      if (assets.criticalWarningBase64) {
+        slide.addImage({
+          data: assets.criticalWarningBase64,
+          x: p.x + 2.50, y: p.y + 0.22, w: 0.46, h: 0.41
+        });
+      }
+      slide.addText('Critical\nStation', {
+        x: p.x + 2.98, y: p.y + 0.18, w: 1.00, h: 0.47,
+        fontFace: 'Century Gothic', fontSize: 9.5, bold: true, color: '000000', lineSpacing: 11
+      });
+    }
+
+    const isFlow = (order.stationType !== 'standard');
+    const titleTopY = isFlow ? (p.y + 0.95) : (p.y + 1.25);
+
+    const titleEn = this.toTitleCase(order.nameEn || 'Process Name');
+    const titleEs = this.toTitleCase(order.nameEs || 'Nombre de Proceso');
+
+    slide.addText(titleEn, {
+      x: p.x + 0.20, y: titleTopY, w: p.w - 0.40, h: 0.55,
+      fontFace: 'Century Gothic', fontSize: 20, bold: true, color: '000000', align: 'center', valign: 'middle'
+    });
+
+    slide.addText(titleEs, {
+      x: p.x + 0.20, y: titleTopY + 0.52, w: p.w - 0.40, h: 0.45,
+      fontFace: 'Century Gothic', fontSize: 15, color: '333333', align: 'center', valign: 'middle'
+    });
+
+    if (isFlow) {
+      const isReverse = (order.flowDirection === 'rl');
+      const leftLabel = isReverse ? this.toTitleCase(order.nextProcess || 'Next Process') : this.toTitleCase(order.prevProcess || 'Previous Process');
+      const rightLabel = isReverse ? this.toTitleCase(order.prevProcess || 'Previous Process') : this.toTitleCase(order.nextProcess || 'Next Process');
+
+      slide.addText(leftLabel, {
+        x: p.x + 0.10, y: p.y + 2.34, w: 1.90, h: 0.45,
+        fontFace: 'Century Gothic', fontSize: 11, bold: true, color: '000000', align: 'center', valign: 'middle'
+      });
+
+      if (assets.flowArrow) {
+        slide.addImage({
+          data: assets.flowArrow,
+          x: p.x + 2.05, y: p.y + 2.28, w: 0.82, h: 0.54,
+          rotate: isReverse ? 0 : 180
+        });
+      }
+
+      slide.addText(rightLabel, {
+        x: p.x + 2.92, y: p.y + 2.34, w: 1.90, h: 0.45,
+        fontFace: 'Century Gothic', fontSize: 11, bold: true, color: '000000', align: 'center', valign: 'middle'
+      });
+    }
+
+    if (order.includeLogo && assets.flexLogo) {
+      slide.addImage({
+        data: assets.flexLogo,
+        x: p.x + p.w - 0.92, y: p.y + p.h - 0.56, w: 0.78, h: 0.40
+      });
+    }
+  }
+
+  buildPptxStationSlides(pptx, order, assets) {
+    this.buildPptxPackLayout(pptx, [order], assets);
+  }
+
+  /* 2. Bines de Material: 4 Tamaños oficiales (2x7, 2.5x9, 4x10, 6x20 cm) */
+  drawPptxBin(slide, p, order, assets, pptx) {
+    const shapeRect = (pptx.shapes && pptx.shapes.RECTANGLE) || (pptx.ShapeType && pptx.ShapeType.rect) || 'rect';
+    const pn = (order.partNumber || 'TYEH-1144337_00-BW').toUpperCase();
+    const barcodeData = this.generateBarcodeDataUrl(pn);
+    const qrData = this.generateQrDataUrl(pn);
+    const x = p.x;
+    const y = p.y;
+    const w = p.w;
+    const h = p.h;
+
+    // 1. Marco exterior
+    slide.addShape(shapeRect, {
+      x: x, y: y, w: w, h: h,
+      line: { color: 'CBD5E1', width: 0.8 },
+      fill: { color: 'FFFFFF' }
+    });
+
+    // 2. Columna izquierda: Foto del Material
+    const photoW = w * 0.28;
+    slide.addShape(shapeRect, {
+      x: x, y: y, w: photoW, h: h,
+      line: { color: 'E2E8F0', width: 0.5 },
+      fill: { color: 'F8FAFC' }
+    });
+
+    if (order.photoDataUrl) {
+      slide.addImage({
+        data: order.photoDataUrl,
+        x: x + 0.04, y: y + 0.04, w: photoW - 0.08, h: h - 0.08,
+        sizing: { type: 'contain' }
+      });
+    } else {
+      slide.addText('Foto', {
+        x: x, y: y + h * 0.35, w: photoW, h: h * 0.30,
+        fontFace: 'Century Gothic', fontSize: Math.max(6.5, h * 5.5), color: '94A3B8', align: 'center', valign: 'middle'
+      });
+    }
+
+    // 3. Columna derecha: Códigos, P/N y Banner Inferior
+    const mainX = x + photoW;
+    const mainW = w - photoW;
+
+    // Fila superior: Barcode + QR + RoHS
+    const topH = h * 0.34;
+    const barcodeW = mainW * 0.48;
+    slide.addImage({
+      data: barcodeData,
+      x: mainX + 0.06, y: y + 0.03, w: barcodeW, h: topH - 0.04
+    });
+
+    const qrSize = Math.min(topH - 0.04, 0.45);
+    slide.addImage({
+      data: qrData,
+      x: mainX + barcodeW + 0.10, y: y + 0.03, w: qrSize, h: qrSize
+    });
+
+    if (assets.rohsBadge) {
+      const rohsSize = Math.min(topH - 0.02, 0.44);
+      slide.addImage({
+        data: assets.rohsBadge,
+        x: mainX + mainW - rohsSize - 0.05, y: y + 0.03, w: rohsSize, h: rohsSize
+      });
+    }
+
+    // Fila media: Part Number
+    const pnY = y + topH;
+    const pnH = h * 0.33;
+    const pnFontSize = Math.max(8, Math.min(Math.round(h * 11), 16));
+    slide.addText(pn, {
+      x: mainX + 0.08, y: pnY, w: mainW - 0.12, h: pnH,
+      fontFace: 'Century Gothic', fontSize: pnFontSize, bold: true, color: '000000', align: 'left', valign: 'middle'
+    });
+
+    // Fila inferior
+    const botY = y + topH + pnH;
+    const botH = h - (topH + pnH);
+
+    if (order.binType === 'minmax') {
+      if (order.includeLogo) {
+        const wLogo = mainW * 0.25;
+        const wMin = mainW * 0.25;
+        const wMax = mainW * 0.25;
+        const wRp = mainW - (wLogo + wMin + wMax);
+
+        slide.addShape(shapeRect, {
+          x: mainX, y: botY, w: wLogo, h: botH,
+          fill: { color: '009ADD' }, line: { color: '009ADD', width: 0 }
+        });
+        slide.addText('flex', {
+          x: mainX, y: botY, w: wLogo, h: botH,
+          fontFace: 'Century Gothic', fontSize: Math.max(7, botH * 14), bold: true, color: 'FFFFFF', align: 'center', valign: 'middle'
+        });
+
+        slide.addShape(shapeRect, {
+          x: mainX + wLogo, y: botY, w: wMin, h: botH,
+          fill: { color: 'DC2626' }, line: { color: 'DC2626', width: 0 }
+        });
+        slide.addText(`Min: ${order.minVal || '20'}`, {
+          x: mainX + wLogo, y: botY, w: wMin, h: botH,
+          fontFace: 'Century Gothic', fontSize: Math.max(6.5, botH * 13), bold: true, color: 'FFFFFF', align: 'center', valign: 'middle'
+        });
+
+        slide.addShape(shapeRect, {
+          x: mainX + wLogo + wMin, y: botY, w: wMax, h: botH,
+          fill: { color: '16A34A' }, line: { color: '16A34A', width: 0 }
+        });
+        slide.addText(`Max: ${order.maxVal || '150'}`, {
+          x: mainX + wLogo + wMin, y: botY, w: wMax, h: botH,
+          fontFace: 'Century Gothic', fontSize: Math.max(6.5, botH * 13), bold: true, color: 'FFFFFF', align: 'center', valign: 'middle'
+        });
+
+        slide.addShape(shapeRect, {
+          x: mainX + wLogo + wMin + wMax, y: botY, w: wRp, h: botH,
+          fill: { color: 'D97706' }, line: { color: 'D97706', width: 0 }
+        });
+        slide.addText(`RP: ${order.rpVal || '50'}`, {
+          x: mainX + wLogo + wMin + wMax, y: botY, w: wRp, h: botH,
+          fontFace: 'Century Gothic', fontSize: Math.max(6.5, botH * 13), bold: true, color: 'FFFFFF', align: 'center', valign: 'middle'
+        });
+      } else {
+        const segW = mainW / 3;
+        slide.addShape(shapeRect, {
+          x: mainX, y: botY, w: segW, h: botH,
+          fill: { color: 'DC2626' }, line: { color: 'DC2626', width: 0 }
+        });
+        slide.addText(`Min: ${order.minVal || '20'}`, {
+          x: mainX, y: botY, w: segW, h: botH,
+          fontFace: 'Century Gothic', fontSize: Math.max(6.5, botH * 13), bold: true, color: 'FFFFFF', align: 'center', valign: 'middle'
+        });
+
+        slide.addShape(shapeRect, {
+          x: mainX + segW, y: botY, w: segW, h: botH,
+          fill: { color: '16A34A' }, line: { color: '16A34A', width: 0 }
+        });
+        slide.addText(`Max: ${order.maxVal || '150'}`, {
+          x: mainX + segW, y: botY, w: segW, h: botH,
+          fontFace: 'Century Gothic', fontSize: Math.max(6.5, botH * 13), bold: true, color: 'FFFFFF', align: 'center', valign: 'middle'
+        });
+
+        slide.addShape(shapeRect, {
+          x: mainX + segW * 2, y: botY, w: segW, h: botH,
+          fill: { color: 'D97706' }, line: { color: 'D97706', width: 0 }
+        });
+        slide.addText(`RP: ${order.rpVal || '50'}`, {
+          x: mainX + segW * 2, y: botY, w: segW, h: botH,
+          fontFace: 'Century Gothic', fontSize: Math.max(6.5, botH * 13), bold: true, color: 'FFFFFF', align: 'center', valign: 'middle'
+        });
+      }
+
+    } else {
+      slide.addShape(shapeRect, {
+        x: mainX, y: botY, w: mainW, h: botH,
+        fill: { color: '009ADD' }, line: { color: '009ADD', width: 0 }
+      });
+
+      const descText = this.toTitleCase(order.commonName || 'Material');
+      const textW = order.includeLogo ? (mainW - 0.70) : (mainW - 0.16);
+      slide.addText(descText, {
+        x: mainX + 0.08, y: botY, w: textW, h: botH,
+        fontFace: 'Century Gothic', fontSize: Math.max(7, botH * 14), bold: true, color: 'FFFFFF', align: 'left', valign: 'middle'
+      });
+
+      if (order.includeLogo) {
+        slide.addText('flex', {
+          x: mainX + mainW - 0.65, y: botY, w: 0.60, h: botH,
+          fontFace: 'Century Gothic', fontSize: Math.max(7.5, botH * 16), bold: true, color: 'FFFFFF', align: 'right', valign: 'middle'
         });
       }
     }
   }
 
-  /* 5. Carro / Rack Viajero Reutilizable (Slides 29 y 30): Formato Limpio para Llenado Manual */
-  buildPptxTravelerSlides(pptx, order, assets) {
-    const shapeRect = (pptx.shapes && pptx.shapes.RECTANGLE) || (pptx.ShapeType && pptx.ShapeType.rect) || 'rect';
-    const cardPositions = [
-      { x: 0.49, y: 0.45, w: 4.92, h: 3.54 },
-      { x: 5.59, y: 0.45, w: 4.92, h: 3.54 },
-      { x: 0.49, y: 4.30, w: 4.92, h: 3.54 },
-      { x: 5.59, y: 4.30, w: 4.92, h: 3.54 }
-    ];
+  buildPptxBinSlides(pptx, order, assets) {
+    this.buildPptxPackLayout(pptx, [order], assets);
+  }
 
+  /* 3. Tarjetas de Scrap: 5 Tamaños oficiales, Tarjeta Roja Oficial */
+  drawPptxScrap(slide, p, order, assets, pptx) {
+    const shapeRect = (pptx.shapes && pptx.shapes.RECTANGLE) || (pptx.ShapeType && pptx.ShapeType.rect) || 'rect';
+    const x = p.x;
+    const y = p.y;
+    const w = p.w;
+    const h = p.h;
+
+    if (w >= 4.5 && h >= 3.0) {
+      // Formato Grande 9 x 12.5 cm
+      slide.addShape(shapeRect, {
+        x: x, y: y, w: w, h: h,
+        fill: { color: 'DC2626' },
+        line: { color: 'B91C1C', width: 1.5 }
+      });
+
+      if (assets.rohsBadge) {
+        slide.addImage({
+          data: assets.rohsBadge,
+          x: x + w - 0.85, y: y + 0.20, w: 0.65, h: 0.68
+        });
+      }
+
+      slide.addText('Scrap', {
+        x: x + 0.20, y: y + 1.05, w: w - 0.40, h: 1.30,
+        fontFace: 'Century Gothic', fontSize: 62, bold: true, color: 'FFFFFF', align: 'center', valign: 'middle'
+      });
+
+      if (order.includeLogo) {
+        slide.addText('flex', {
+          x: x + w - 1.40, y: y + h - 0.70, w: 1.20, h: 0.50,
+          fontFace: 'Century Gothic', fontSize: 26, bold: true, color: 'FFFFFF', align: 'right', valign: 'middle'
+        });
+      }
+    } else {
+      // Formatos compactos (2x7, 2.5x9, 4x10, 6x20 cm)
+      slide.addShape(shapeRect, {
+        x: x, y: y, w: w, h: h,
+        fill: { color: 'DC2626' },
+        line: { color: 'B91C1C', width: 1 }
+      });
+
+      if (assets.rohsBadge) {
+        const rohsH = Math.min(h * 0.35, 0.45);
+        slide.addImage({
+          data: assets.rohsBadge,
+          x: x + w - rohsH - 0.06, y: y + 0.04, w: rohsH, h: rohsH
+        });
+      }
+
+      const scrapFontSize = Math.max(12, Math.min(Math.round(h * 24), 38));
+      slide.addText('Scrap', {
+        x: x + 0.10, y: y + (h - h * 0.5) / 2, w: w - 0.20, h: h * 0.50,
+        fontFace: 'Century Gothic', fontSize: scrapFontSize, bold: true, color: 'FFFFFF', align: 'center', valign: 'middle'
+      });
+
+      if (order.includeLogo) {
+        slide.addText('flex', {
+          x: x + w - 0.70, y: y + h - 0.35, w: 0.65, h: 0.30,
+          fontFace: 'Century Gothic', fontSize: Math.max(7, h * 8), bold: true, color: 'FFFFFF', align: 'right', valign: 'middle'
+        });
+      }
+    }
+  }
+
+  buildPptxScrapSlides(pptx, order, assets) {
+    this.buildPptxPackLayout(pptx, [order], assets);
+  }
+
+  /* 4. Slot con esquinas rectas */
+  drawPptxSlot(slide, p, order, assets, pptx, slotNum) {
+    const shapeRect = (pptx.shapes && pptx.shapes.RECTANGLE) || (pptx.ShapeType && pptx.ShapeType.rect) || 'rect';
+    slide.addShape(shapeRect, {
+      x: p.x, y: p.y, w: p.w, h: p.h,
+      line: { color: '009ADD', width: 3 },
+      fill: { color: 'FFFFFF' }
+    });
+
+    if (assets.rohsBadge) {
+      slide.addImage({
+        data: assets.rohsBadge,
+        x: p.x + p.w - 0.8, y: p.y + 0.3, w: 0.6, h: 0.62
+      });
+    }
+
+    slide.addText(this.toTitleCase(order.rackName || 'RACK IST'), {
+      x: p.x + 0.3, y: p.y + 0.4, w: 1.8, h: 0.4,
+      fontFace: 'Century Gothic', fontSize: 12, bold: true, color: '64748B'
+    });
+
+    slide.addText(String(slotNum), {
+      x: p.x + 0.2, y: p.y + 2.0, w: p.w - 0.4, h: 2.2,
+      fontFace: 'Century Gothic', fontSize: 90, bold: true, color: '000000', align: 'center', valign: 'middle'
+    });
+
+    slide.addText('SLOT', {
+      x: p.x + 0.2, y: p.y + 4.4, w: p.w - 0.4, h: 0.8,
+      fontFace: 'Century Gothic', fontSize: 28, bold: true, color: '009ADD', align: 'center'
+    });
+
+    if (order.includeLogo && assets.flexLogo) {
+      slide.addImage({
+        data: assets.flexLogo,
+        x: p.x + p.w - 1.1, y: p.y + p.h - 0.7, w: 0.85, h: 0.42
+      });
+    }
+  }
+
+  /* 5. Carro / Rack Viajero Reutilizable (9x12.5 cm) */
+  drawPptxTraveler(slide, p, order, assets, pptx) {
+    const shapeRect = (pptx.shapes && pptx.shapes.RECTANGLE) || (pptx.ShapeType && pptx.ShapeType.rect) || 'rect';
     const isRack = (order.travelerType === 'Rack');
     const headerTitle = isRack ? 'RACK' : 'CARRO';
 
-    const qty = order.qty || 4;
-    const totalSlides = Math.ceil(qty / 4);
-    let placed = 0;
+    // Marco oficial azul
+    slide.addShape(shapeRect, {
+      x: p.x, y: p.y, w: p.w, h: p.h,
+      line: { color: '009ADD', width: 3.0 },
+      fill: { color: 'FFFFFF' }
+    });
 
-    for (let s = 0; s < totalSlides; s++) {
-      const slide = pptx.addSlide();
+    // Título del tipo
+    slide.addText(headerTitle, {
+      x: p.x + 0.35, y: p.y + 0.20, w: 2.50, h: 0.50,
+      fontFace: 'Century Gothic', fontSize: 22, bold: true, color: '000000'
+    });
 
-      for (let pos = 0; pos < 4 && placed < qty; pos++, placed++) {
-        const p = cardPositions[pos];
+    // RoHS en esquina superior derecha
+    if (assets.rohsBadge) {
+      slide.addImage({
+        data: assets.rohsBadge,
+        x: p.x + p.w - 0.82, y: p.y + 0.15, w: 0.62, h: 0.64
+      });
+    }
 
-        // Marco oficial azul
-        slide.addShape(shapeRect, {
-          x: p.x, y: p.y, w: p.w, h: p.h,
-          line: { color: '009ADD', width: 3.0 },
-          fill: { color: 'FFFFFF' }
-        });
+    const lineLabels = isRack 
+      ? [
+          'Área: ____________________________________',
+          'Encargado: ________________________________',
+          'Destino: __________________________________',
+          'Qty: ______________________________________'
+        ]
+      : [
+          'Área: ____________________________________',
+          'Encargado: ________________________________',
+          'Origen: ___________________________________',
+          'Destino: __________________________________',
+          'Qty: ______________________________________'
+        ];
 
-        // Título del tipo
-        slide.addText(headerTitle, {
-          x: p.x + 0.35, y: p.y + 0.20, w: 2.50, h: 0.50,
-          fontFace: 'Century Gothic', fontSize: 22, bold: true, color: '000000'
-        });
+    slide.addText(lineLabels.join('\n\n'), {
+      x: p.x + 0.35, y: p.y + 0.85, w: 4.25, h: 1.65,
+      fontFace: 'Century Gothic', fontSize: isRack ? 12.5 : 11.5, bold: true, color: '000000', lineSpacing: isRack ? 22 : 18
+    });
 
-        // RoHS en esquina superior derecha
-        if (assets.rohsBadge) {
-          slide.addImage({
-            data: assets.rohsBadge,
-            x: p.x + 4.10, y: p.y + 0.15, w: 0.62, h: 0.64
-          });
-        }
+    // Recuadro para Sello de Calidad / Autorización
+    slide.addShape(shapeRect, {
+      x: p.x + 0.35, y: p.y + 2.65, w: 1.90, h: 0.68,
+      line: { color: '94A3B8', width: 0.8, dashType: 'dash' },
+      fill: { color: 'F8FAFC' }
+    });
 
-        // Líneas para llenado manual con marcador borrable
-        // Según Slide 29 (Carro): Área, Encargado, Origen, Destino, Qty
-        // Según Slide 30 (Rack): Área, Encargado, Destino, Qty (sin Origen)
-        const lineLabels = isRack 
-          ? [
-              'Área: ____________________________________',
-              'Encargado: ________________________________',
-              'Destino: __________________________________',
-              'Qty: ______________________________________'
-            ]
-          : [
-              'Área: ____________________________________',
-              'Encargado: ________________________________',
-              'Origen: ___________________________________',
-              'Destino: __________________________________',
-              'Qty: ______________________________________'
-            ];
+    slide.addText('Sello / Autorización', {
+      x: p.x + 0.35, y: p.y + 2.78, w: 1.90, h: 0.40,
+      fontFace: 'Century Gothic', fontSize: 8.5, color: '94A3B8', align: 'center', valign: 'middle'
+    });
 
-        slide.addText(lineLabels.join('\n\n'), {
-          x: p.x + 0.35, y: p.y + 0.85, w: 4.25, h: 1.65,
-          fontFace: 'Century Gothic', fontSize: isRack ? 12.5 : 11.5, bold: true, color: '000000', lineSpacing: isRack ? 22 : 18
-        });
+    // Nota aclaratoria de uso al pie
+    const noteText = isRack 
+      ? 'Solo usar en racks destinados a almacenamiento de WIP'
+      : 'Solo usar en carros para transporte de WIP';
 
-        // Recuadro para Sello de Calidad / Autorización
-        slide.addShape(shapeRect, {
-          x: p.x + 0.35, y: p.y + 2.65, w: 1.90, h: 0.68,
-          line: { color: '94A3B8', width: 0.8, dashType: 'dash' },
-          fill: { color: 'F8FAFC' }
-        });
+    slide.addText(noteText, {
+      x: p.x + 0.35, y: p.y + 3.32, w: 3.50, h: 0.18,
+      fontFace: 'Century Gothic', fontSize: 6.5, italic: true, color: '64748B'
+    });
 
-        slide.addText('Sello / Autorización', {
-          x: p.x + 0.35, y: p.y + 2.78, w: 1.90, h: 0.40,
-          fontFace: 'Century Gothic', fontSize: 8.5, color: '94A3B8', align: 'center', valign: 'middle'
-        });
-
-        // Nota aclaratoria de uso al pie
-        const noteText = isRack 
-          ? 'Solo usar en racks destinados a almacenamiento de WIP'
-          : 'Solo usar en carros para transporte de WIP';
-
-        slide.addText(noteText, {
-          x: p.x + 0.35, y: p.y + 3.32, w: 3.50, h: 0.18,
-          fontFace: 'Century Gothic', fontSize: 6.5, italic: true, color: '64748B'
-        });
-
-        // Logo Flex oficial en esquina inferior derecha
-        if (assets.flexLogo) {
-          slide.addImage({
-            data: assets.flexLogo,
-            x: p.x + 3.90, y: p.y + 2.85, w: 0.85, h: 0.45
-          });
-        }
-      }
+    // Logo Flex oficial en esquina inferior derecha
+    if (order.includeLogo && assets.flexLogo) {
+      slide.addImage({
+        data: assets.flexLogo,
+        x: p.x + p.w - 1.02, y: p.y + p.h - 0.69, w: 0.85, h: 0.45
+      });
     }
   }
 
-  /* 6. Letrero Aéreo (Slides 21-23) */
-  buildPptxAerialSlides(pptx, order, assets) {
+  /* 6. Letrero Aéreo (9.5 x 5.5 in) */
+  drawPptxAerial(slide, p, order, assets, pptx) {
     const shapeRect = (pptx.shapes && pptx.shapes.RECTANGLE) || (pptx.ShapeType && pptx.ShapeType.rect) || 'rect';
-    const slide = pptx.addSlide();
-    const p = { x: 0.75, y: 1.50, w: 9.50, h: 5.50 };
-
     slide.addShape(shapeRect, {
       x: p.x, y: p.y, w: p.w, h: p.h,
       fill: { color: 'FFFFFF' },
@@ -2366,7 +2585,7 @@ class FlexSignageApp {
       fontFace: 'Century Gothic', fontSize: 32, bold: true, color: '009ADD', align: 'center', valign: 'middle'
     });
 
-    if (assets.flexLogo) {
+    if (order.includeLogo && assets.flexLogo) {
       slide.addImage({
         data: assets.flexLogo,
         x: p.x + p.w - 1.80, y: p.y + p.h - 0.90, w: 1.50, h: 0.70
@@ -2374,10 +2593,21 @@ class FlexSignageApp {
     }
   }
 
+  /* Métodos heredados para compatibilidad directa */
+  buildPptxSlotSlides(pptx, order, assets) {
+    this.buildPptxPackLayout(pptx, [order], assets);
+  }
+  buildPptxTravelerSlides(pptx, order, assets) {
+    this.buildPptxPackLayout(pptx, [order], assets);
+  }
+  buildPptxAerialSlides(pptx, order, assets) {
+    this.buildPptxPackLayout(pptx, [order], assets);
+  }
+
   batchExportStationsPptx() {
-    const stationOrders = this.orders.filter(o => o.category === 'station');
-    if (stationOrders.length === 0) {
-      alert('No hay identificaciones de estación registradas para exportar.');
+    const candidateOrders = this.getFilteredOrders();
+    if (!candidateOrders || candidateOrders.length === 0) {
+      alert('No hay pedidos registrados para exportar con el filtro actual.');
       return;
     }
 
@@ -2393,14 +2623,16 @@ class FlexSignageApp {
 
       const assets = window.FLEX_ASSETS || {};
 
-      stationOrders.forEach(order => {
-        this.buildPptxStationSlides(pptx, order, assets);
-      });
+      const count = this.buildPptxPackLayout(pptx, candidateOrders, assets);
+      if (count === 0) {
+        alert('Los pedidos seleccionados no contienen identificaciones compatibles con PowerPoint.');
+        return;
+      }
 
-      const filename = `Lote_Estaciones_Flex_${new Date().toISOString().slice(0, 10)}.pptx`;
+      const filename = `Lote_Identificaciones_Flex_${new Date().toISOString().slice(0, 10)}.pptx`;
       pptx.writeFile({ fileName: filename })
         .then(() => {
-          this.showToast(`📥 Descargando lote completo: ${filename}`);
+          this.showToast(`📥 Descargando lote completo (${count} piezas): ${filename}`);
         })
         .catch(err => {
           alert('Error al descargar lote: ' + err.message);

@@ -166,7 +166,7 @@
 
                   <!-- Toggles Condicionales -->
                   <div class="form-group-full">
-                    <label class="form-label">Iconos Condicionales</label>
+                    <label class="form-label">Iconos y Opciones de Tarjeta</label>
                     <div class="toggle-cards-row">
                       <div id="card-toggle-critical" class="toggle-card" onclick="app.toggleCheck('check-is-critical')">
                         <div class="toggle-card-info">
@@ -192,6 +192,20 @@
                         </div>
                         <label class="switch" onclick="event.stopPropagation()">
                           <input type="checkbox" id="check-is-seated" onchange="app.onToggleCardChange('seated')">
+                          <span class="slider"></span>
+                        </label>
+                      </div>
+
+                      <div id="card-toggle-station-logo" class="toggle-card" onclick="app.toggleCheck('check-station-logo')">
+                        <div class="toggle-card-info">
+                          <span class="toggle-card-icon">🏷️</span>
+                          <div class="toggle-card-text">
+                            <h4>Logo Flex</h4>
+                            <p>Opcional (Desactivado para Axiom)</p>
+                          </div>
+                        </div>
+                        <label class="switch" onclick="event.stopPropagation()">
+                          <input type="checkbox" id="check-station-logo" onchange="app.onToggleCardChange('station-logo')">
                           <span class="slider"></span>
                         </label>
                       </div>
@@ -272,6 +286,22 @@
                     <small style="color:var(--text-muted); font-size:0.75rem;">Sube la foto del componente o déjalo vacío para usar la ilustración estándar.</small>
                   </div>
 
+                  <div class="form-group-full">
+                    <div id="card-toggle-bin-logo" class="toggle-card" onclick="app.toggleCheck('check-bin-logo')">
+                      <div class="toggle-card-info">
+                        <span class="toggle-card-icon">🏷️</span>
+                        <div class="toggle-card-text">
+                          <h4>Logo Flex</h4>
+                          <p>Opcional (Desactivado para Axiom)</p>
+                        </div>
+                      </div>
+                      <label class="switch" onclick="event.stopPropagation()">
+                        <input type="checkbox" id="check-bin-logo" onchange="app.onToggleCardChange('bin-logo')">
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                  </div>
+
                   <div>
                     <label class="form-label" for="bin-qty">Cantidad de Identificaciones</label>
                     <input type="number" id="bin-qty" class="form-control" value="8" min="1" max="100">
@@ -302,6 +332,21 @@
                     <label class="form-label" for="scrap-qty">Cantidad de Tarjetas</label>
                     <input type="number" id="scrap-qty" class="form-control" value="2" min="1" max="20">
                   </div>
+                  <div class="form-group-full">
+                    <div id="card-toggle-scrap-logo" class="toggle-card" onclick="app.toggleCheck('check-scrap-logo')">
+                      <div class="toggle-card-info">
+                        <span class="toggle-card-icon">🏷️</span>
+                        <div class="toggle-card-text">
+                          <h4>Logo Flex</h4>
+                          <p>Opcional (Desactivado para Axiom)</p>
+                        </div>
+                      </div>
+                      <label class="switch" onclick="event.stopPropagation()">
+                        <input type="checkbox" id="check-scrap-logo" onchange="app.onToggleCardChange('scrap-logo')">
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -319,6 +364,21 @@
                   <div>
                     <label class="form-label" for="slot-qty">Cantidad</label>
                     <input type="number" id="slot-qty" class="form-control" value="3" min="1" max="50">
+                  </div>
+                  <div class="form-group-full">
+                    <div id="card-toggle-slot-logo" class="toggle-card" onclick="app.toggleCheck('check-slot-logo')">
+                      <div class="toggle-card-info">
+                        <span class="toggle-card-icon">🏷️</span>
+                        <div class="toggle-card-text">
+                          <h4>Logo Flex</h4>
+                          <p>Opcional (Desactivado para Axiom)</p>
+                        </div>
+                      </div>
+                      <label class="switch" onclick="event.stopPropagation()">
+                        <input type="checkbox" id="check-slot-logo" onchange="app.onToggleCardChange('slot-logo')">
+                        <span class="slider"></span>
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -347,6 +407,21 @@
                     <label class="form-label" for="traveler-qty">Cantidad de Identificaciones</label>
                     <input type="number" id="traveler-qty" class="form-control" value="4" min="1" max="30">
                   </div>
+                  <div class="form-group-full">
+                    <div id="card-toggle-traveler-logo" class="toggle-card" onclick="app.toggleCheck('check-traveler-logo')">
+                      <div class="toggle-card-info">
+                        <span class="toggle-card-icon">🏷️</span>
+                        <div class="toggle-card-text">
+                          <h4>Logo Flex</h4>
+                          <p>Opcional (Desactivado para Axiom)</p>
+                        </div>
+                      </div>
+                      <label class="switch" onclick="event.stopPropagation()">
+                        <input type="checkbox" id="check-traveler-logo" onchange="app.onToggleCardChange('traveler-logo')">
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -368,6 +443,21 @@
                   <div>
                     <label class="form-label" for="aerial-qty">Cantidad de Letreros</label>
                     <input type="number" id="aerial-qty" class="form-control" value="1" min="1" max="10">
+                  </div>
+                  <div class="form-group-full">
+                    <div id="card-toggle-aerial-logo" class="toggle-card" onclick="app.toggleCheck('check-aerial-logo')">
+                      <div class="toggle-card-info">
+                        <span class="toggle-card-icon">🏷️</span>
+                        <div class="toggle-card-text">
+                          <h4>Logo Flex</h4>
+                          <p>Opcional (Desactivado para Axiom)</p>
+                        </div>
+                      </div>
+                      <label class="switch" onclick="event.stopPropagation()">
+                        <input type="checkbox" id="check-aerial-logo" onchange="app.onToggleCardChange('aerial-logo')">
+                        <span class="slider"></span>
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -523,7 +613,7 @@
 
                   <!-- Fila Inferior: Flex Logo en esquina inferior derecha -->
                   <div class="replica-bottom-row">
-                    <img id="replica-img-logo" src="assets/flex_logo.png" alt="Flex" class="replica-flex-logo">
+                    <img id="replica-img-logo" src="assets/flex_logo.png" alt="Flex" class="replica-flex-logo" style="display:none;">
                   </div>
                 </div>
               </div>
@@ -559,12 +649,12 @@
                     <!-- Inferior Simple: Banner Azul con Nombre Común y Logo Flex -->
                     <div class="bin-desc-bar" id="replica-bin-desc-bar">
                       <span id="replica-bin-common-name-txt">Tornillo M4 x 12mm</span>
-                      <img src="assets/flex_logo.png" alt="Flex" class="bin-flex-logo-white">
+                      <img id="replica-bin-logo-simple" src="assets/flex_logo.png" alt="Flex" class="bin-flex-logo-white" style="display:none;">
                     </div>
 
                     <!-- Inferior Min-Max: 4 bloques coloreados con Logo Flex, Min, Max y RP -->
                     <div class="bin-metrics-bar" id="replica-bin-metrics-bar" style="display:none;">
-                      <div class="bin-segment-logo">
+                      <div class="bin-segment-logo" id="replica-bin-logo-seg" style="display:none;">
                         <img src="assets/flex_logo.png" alt="Flex" class="bin-flex-logo-white">
                       </div>
                       <div class="bin-segment-box seg-min">
@@ -590,7 +680,7 @@
                   </div>
                   <div class="scrap-title-standard">Scrap</div>
                   <div class="scrap-bottom-row">
-                    <img src="assets/flex_logo.png" alt="Flex" style="height:24px; filter:brightness(0) invert(1);">
+                    <img id="replica-scrap-logo" src="assets/flex_logo.png" alt="Flex" style="height:24px; filter:brightness(0) invert(1); display:none;">
                   </div>
                 </div>
               </div>
@@ -605,7 +695,7 @@
                   <div class="slot-label-text">SLOT</div>
                   <div id="replica-slot-num" class="slot-number-big">1</div>
                   <div class="slot-bottom-row">
-                    <img src="assets/flex_logo.png" alt="Flex" style="height:22px;">
+                    <img id="replica-slot-logo" src="assets/flex_logo.png" alt="Flex" style="height:22px; display:none;">
                   </div>
                 </div>
               </div>
@@ -645,7 +735,7 @@
                   </div>
                   <div class="traveler-bottom-row">
                     <span id="replica-traveler-footer-note" class="traveler-footer-note">Solo usar en carros para transporte de WIP</span>
-                    <img src="assets/flex_logo.png" alt="Flex" style="height:22px;">
+                    <img id="replica-traveler-logo" src="assets/flex_logo.png" alt="Flex" style="height:22px; display:none;">
                   </div>
                 </div>
               </div>
@@ -661,7 +751,7 @@
                     <div id="replica-aerial-sub" class="hanging-sign-subtitle">Lineas de PCR</div>
                   </div>
                   <div class="hanging-bottom-row">
-                    <img src="assets/flex_logo.png" alt="Flex" style="height:24px;">
+                    <img id="replica-aerial-logo" src="assets/flex_logo.png" alt="Flex" style="height:24px; display:none;">
                   </div>
                 </div>
               </div>
